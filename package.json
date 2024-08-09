@@ -1,0 +1,34 @@
+{
+  "name": "pigment-token-website",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@sentry/nextjs": "^7.118.0",
+    "@web3modal/ethers": "^5.0.11",
+    "bootstrap": "^5.3.3",
+    "crypto-js": "^4.2.0",
+    "ethers": "^6.13.2",
+    "next": "latest",
+    "react": "latest",
+    "react-bootstrap": "^2.10.4",
+    "react-bootstrap-icons": "^1.11.4",
+    "react-dom": "latest",
+    "react-router-dom": "^6.26.0"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@types/react-router-dom": "^5.3.3",
+    "eslint": "latest",
+    "eslint-config-next": "latest",
+    "typescript": "latest"
+  }
+}
