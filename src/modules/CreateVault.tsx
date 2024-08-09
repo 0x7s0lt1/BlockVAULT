@@ -34,21 +34,22 @@ const CreateVault : FC<Props> = ({setVault}) => {
                     const signer = await provider.getSigner();
                     const contract = new Contract( ManagerAddress, ManagerABI, signer );
 
-                    await contract['createVault']({from: address});
+                    const create = await contract['createVault']({from: address});
 
                     setStatusMessage("Deploying Contract...");
 
-                    const vaultAddr = await contract['getVaultByOwner']({from: address});
+                    create.wait().then( async () => {
 
-                    vaultAddr.wait().then((receipt: any) => {
+                        const vaultAddr = await contract['getVaultByOwner']({from: address});
 
-                        if(vault_addr != DEFAULT_ADDRESS){
+                        if(vaultAddr != DEFAULT_ADDRESS){
                             setVault( new Contract( vaultAddr, VaultABI, signer ) );
                         }
 
                         setIsLoading(false);
 
-                    })
+                    });
+
 
                 }
 
@@ -74,14 +75,14 @@ const CreateVault : FC<Props> = ({setVault}) => {
                 <div className="card">
 
                     <p className="card-text">
-                        To set up a vault, you'll need to deploy a smart contract that securely manages all your
-                        secrets.
-                        Please note that deploying the smart contract requires a small gas fee.
+                        Welcome to our comprehensive on-chain password and secret manager.
                         <br/><br/>
-                        We recommend using the Polygon Mainnet, so ensure you have sufficient MATIC in your wallet to
-                        cover the gas costs, which typically range from $0.04 to $0.08.
+                        To set up your secure vault, you will need to deploy a smart contract designed to manage your secrets effectively. Please be aware that deploying this smart contract incurs a modest gas fee. Additionally, each transaction that involves creating, editing, or deleting secrets will also incur some gas costs.
                         <br/><br/>
-                        Once you're ready, simply click the button below and confirm the transaction.
+                        We recommend using the Polygon Mainnet for this process. Please ensure that your wallet contains enough MATIC to cover these gas costs, which typically range between $0.04 and $0.08.
+                        <br/><br/>
+
+                        When you're ready to proceed, simply click the button below and confirm the transaction.
                         <br/>
                         <br/><br/>
 

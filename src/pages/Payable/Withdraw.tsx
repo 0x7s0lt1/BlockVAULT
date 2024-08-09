@@ -1,15 +1,27 @@
 
-import React, {FC, useEffect, useState} from "react";
-import {Contract} from "ethers";
+import { FC } from "react";
+import { Contract } from "ethers";
+import WithdrawForm from "@/modules/Forms/Payable/WithdrawForm";
 
 type Props = {
+    fetchBalance: Function,
     vault: Contract | null
 }
-const Withdraw : FC<Props> = ({vault}) => {
+const Withdraw : FC<Props> = ({ fetchBalance, vault}) => {
 
     return (
         <>
-            <h2>Withdraw</h2>
+            <div className={"page-header"}>
+                <div>
+                    <h2 className={"page-title"}>Withdraw</h2>
+                </div>
+            </div>
+            <div className={"page-body border-white"}>
+                <WithdrawForm
+                    fetchBalance={fetchBalance}
+                    vault={vault}
+                />
+            </div>
         </>
     )
 }

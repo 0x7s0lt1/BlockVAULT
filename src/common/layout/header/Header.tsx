@@ -9,7 +9,7 @@ const Header : FC = () => {
             <Web3ModalProvider/>
             <header className="header shadow">
                 <Link href={"/"} className="logo">
-                    &nbsp; BlockVault
+                    &nbsp; BLOCKVAULT
                 </Link>
                 {/*<nav>*/}
                 {/*    /!*<Link href={"/encrypt"}>*!/*/}

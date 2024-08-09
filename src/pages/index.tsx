@@ -6,7 +6,7 @@ import MainLayout from "@/common/layout/MainLayout";
 import Meta from "@/common/layout/Meta";
 import CreateVault from "@/modules/CreateVault";
 import ConnectWallet from "@/modules/ConnectWallet";
-import { BrowserProvider, Contract } from "ethers";
+import { BrowserProvider, Contract, formatUnits } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider, useSwitchNetwork  } from '@web3modal/ethers/react';
 import { ADDRESS as ManagerAddress, ABI as ManagerABI } from "@/common/contract/Manager/Contract";
 import { ABI as VaultABI } from "@/common/contract/UserVault/Contract";
@@ -26,8 +26,20 @@ const Index : FC = () => {
     const { address, chainId, isConnected } = useWeb3ModalAccount();
     const { walletProvider } = useWeb3ModalProvider();
 
-    const [connected, setConnected] = useState(false);
+    const [connected, setConnected] = useState<boolean>(false);
     const [vault, setVault] = useState<Contract|null>(null);
+    const [balance, setBalance] = useState<BigInt>(0);
+
+    const fetchBalance = async () => {
+        if(vault && isConnected){
+           try{
+               const _balance = await vault['getBalance']({from: address});
+               setBalance( formatUnits(_balance, 'ether') );
+           }catch (e){
+               console.log(e);
+           }
+        }
+    }
 
     useEffect(() => {
 
@@ -63,6 +75,12 @@ const Index : FC = () => {
 
     }, [address, isConnected]);
 
+    useEffect(() => {
+        (async ()=>{
+            await fetchBalance();
+        })();
+    }, [vault]);
+
     return (
         <MainLayout>
 
@@ -78,13 +96,13 @@ const Index : FC = () => {
                     vault && connected &&
                     <>
                         <div className={"nav"}>
-                            <VaultInfo vault={vault}/>
+                            <VaultInfo balance={balance} vault={vault}/>
                             <ItemsNav/>
                         </div>
                         <div className={"board slot-hover"}>
                             <Routes>
-                                <Route  path="/deposit" element={<Deposit vault={vault}/>} ></Route>
-                                <Route  path="/withdraw" element={<Withdraw vault={vault}/>} ></Route>
+                                <Route  path="/deposit" element={<Deposit fetchBalance={fetchBalance} vault={vault}/>} ></Route>
+                                <Route  path="/withdraw" element={<Withdraw fetchBalance={fetchBalance} vault={vault}/>} ></Route>
 
                                 <Route index path="/loyality/:slug" element={<Loyality vault={vault}/>} ></Route>
                                 <Route path="/debit/:slug" element={<Debit vault={vault}/>} ></Route>

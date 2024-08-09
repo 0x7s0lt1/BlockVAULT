@@ -1,37 +1,25 @@
 
-import React, {FC, useEffect, useState} from "react";
-import {Contract, formatUnits} from "ethers";
+import { FC } from "react";
+import { Contract } from "ethers";
 import { useWeb3ModalAccount } from '@web3modal/ethers/react';
 import { Link } from "react-router-dom";
 
 type Props = {
+    balance: number
     vault: Contract | null
 }
-const VaultInfo : FC<Props> = ({ vault }) => {
-
-    const [balance, setBalance] = useState(0);
+const VaultInfo : FC<Props> = ({ balance, vault }) => {
 
     const { address, chainId, isConnected } = useWeb3ModalAccount();
-
-    useEffect(() => {
-
-        (async ()=>{
-
-            if(vault !== null){
-                const balance = await vault['getBalance']({from: address});
-                setBalance( formatUnits(balance, 'ether') );
-            }
-
-        })();
-
-    }, [vault]);
 
     return (
         <>
             <section className={"vlt-info border-white slot-hover"}>
                 <span className="vlt-text">
                     <h1 className="value">
-                        {balance} MATIC
+                        {
+                            balance !== undefined ? balance + " MATIC" :  <span className="spinner-border text-light" role="status"></span>
+                        }
                     </h1>
                 </span>
                 <span className="vlt-text">
