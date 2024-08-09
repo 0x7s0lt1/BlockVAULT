@@ -1,24 +1,24 @@
 "use client"
 
-import React, {FC, useEffect, useState} from "react";
+import { FC, useEffect, useState } from "react";
 
 import MainLayout from "@/common/layout/MainLayout";
 import Meta from "@/common/layout/Meta";
 import CreateVault from "@/modules/CreateVault";
 import ConnectWallet from "@/modules/ConnectWallet";
-import { BrowserProvider, Contract, formatUnits } from "ethers";
+import { BrowserProvider, Contract } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider, useSwitchNetwork  } from '@web3modal/ethers/react';
-import { CHAIN_ID_DEC, ADDRESS, ABI } from "@/common/contract/Manager/Contract";
+import { ADDRESS as ManagerAddress, ABI as ManagerABI } from "@/common/contract/Manager/Contract";
 import { ABI as VaultABI } from "@/common/contract/UserVault/Contract";
-import { DEFAULT_ADDRESS } from "@/common/utils";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import VaultInfo from "@/modules/VaultInfo";
 import Loyality from "@/pages/Items/Loyality";
 import Debit from "@/pages/Items/Debit";
 import Password from "@/pages/Items/Password";
-import { Key, CreditCard, PostcardHeart } from 'react-bootstrap-icons';
 import Deposit from "@/pages/Payable/Deposit";
 import Withdraw from "@/pages/Payable/Withdraw";
+import ItemsNav from "@/modules/ItemsNav";
+import { DEFAULT_ADDRESS, POLYGON_CHAIN_ID_DEC } from "@/types/Utils";
 
 const Index : FC = () => {
 
@@ -37,25 +37,31 @@ const Index : FC = () => {
                 setConnected(false);
             }
 
-            if(address && walletProvider && isConnected){
+            if(address && isConnected){
 
-                const provider = new BrowserProvider(walletProvider);
-                const signer = await provider.getSigner();
-                const contract = new Contract(ADDRESS, ABI, signer);
+                if(chainId == POLYGON_CHAIN_ID_DEC){
 
-                const vlt_addr = await contract['getVaultByOwner']({from: address});
+                    const provider = new BrowserProvider(walletProvider);
+                    const signer = await provider.getSigner();
+                    const contract = new Contract( ManagerAddress, ManagerABI, signer );
 
-                if(vlt_addr != DEFAULT_ADDRESS){
-                    setVault(new Contract(vlt_addr, VaultABI, signer));
+                    const vaultAddr = await contract['getVaultByOwner']({from: address});
+
+                    if(vaultAddr != DEFAULT_ADDRESS){
+                        setVault( new Contract( vaultAddr, VaultABI, signer ) );
+                    }
+
+                    setConnected(true);
+
                 }
 
-                setConnected(true);
+                //TODO: force polyon mainnet ?
 
             }
 
         })();
 
-    }, [address, walletProvider, isConnected]);
+    }, [address, isConnected]);
 
     return (
         <MainLayout>
@@ -73,34 +79,22 @@ const Index : FC = () => {
                     <>
                         <div className={"nav"}>
                             <VaultInfo vault={vault}/>
-                            <nav className={"border-white slot-hover"}>
-                                <Link className={"nav-item btn-hover"} to={"/password"} >
-                                    <Key size={26}/> &nbsp; Password
-                                </Link>
-                                <Link className={"nav-item btn-hover"} to={"/debit"}>
-                                    <CreditCard size={26}/> &nbsp; Debit Card
-                                </Link>
-                                <Link className={"nav-item btn-hover"} to={"/loyality/list"}>
-                                    <PostcardHeart size={26}/> &nbsp; Loyality Card
-                                </Link>
-                            </nav>
+                            <ItemsNav/>
                         </div>
-
                         <div className={"board slot-hover"}>
                             <Routes>
                                 <Route  path="/deposit" element={<Deposit vault={vault}/>} ></Route>
                                 <Route  path="/withdraw" element={<Withdraw vault={vault}/>} ></Route>
 
-                                <Route index path="/loyality/:page" element={<Loyality vault={vault}/>} ></Route>
-                                <Route path="/debit" element={<Debit vault={vault}/>} ></Route>
-                                <Route path="/password" element={<Password vault={vault}/>} ></Route>
+                                <Route index path="/loyality/:slug" element={<Loyality vault={vault}/>} ></Route>
+                                <Route path="/debit/:slug" element={<Debit vault={vault}/>} ></Route>
+                                <Route path="/password/:slug" element={<Password vault={vault}/>} ></Route>
                             </Routes>
                         </div>
                     </>
                 }
 
             </section>
-
 
         </MainLayout>
     )

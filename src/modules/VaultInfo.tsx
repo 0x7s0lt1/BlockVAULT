@@ -35,7 +35,7 @@ const VaultInfo : FC<Props> = ({ vault }) => {
                     </h1>
                 </span>
                 <span className="vlt-text">
-                    <a className="value link-purple" href={`https://polygonscan.com/address/${vault.target}`}>
+                    <a target={"_blank"} className="value link-purple" href={`https://polygonscan.com/address/${vault.target}`}>
                         {vault.target}
                     </a>
                 </span>

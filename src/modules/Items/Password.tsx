@@ -12,7 +12,7 @@ type Props = {
     setIsDeleteModalVisible: Function,
     vault: Contract | null
 }
-const LoyalityCard: FC<Props> = ({item, setFormEditView, setItem, setIsModalVisible, setIsDeleteModalVisible, vault}) => {
+const Password: FC<Props> = ({item, setFormEditView, setItem, setIsModalVisible, setIsDeleteModalVisible, vault}) => {
 
     const handleEdit = ()=>{
         setItem(item);
@@ -57,4 +57,4 @@ const LoyalityCard: FC<Props> = ({item, setFormEditView, setItem, setIsModalVisi
     )
 }
 
-export default LoyalityCard;
+export default Password;

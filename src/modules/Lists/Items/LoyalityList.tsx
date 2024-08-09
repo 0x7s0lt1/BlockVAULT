@@ -2,30 +2,70 @@
 import React, {FC, useEffect, useState} from "react";
 import { BrowserProvider, Contract } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
-import {ABI, ADDRESS, CHAIN_ID_DEC} from "@/common/contract/UserVault/Contract";
-import {ABI as LoyABI} from "@/common/contract/Items/LoyalityCardContract";
-import {ItemType} from "@/types/ItemType";
+import { ABI as LoyABI } from "@/common/contract/Items/LoyalityCardContract";
+import { ItemType } from "@/types/ItemType";
 import LoyalityCard from "@/modules/Items/LoyalityCard";
 import LoyalityCardType from "@/types/Items/LoyalityCardType";
+import Modal from "@/modules/Modal/Modal";
+import Header from "@/modules/Modal/LoyalityCard/View/Header";
+import Body from "@/modules/Modal/LoyalityCard/View/Body";
+import Footer from "@/modules/Modal/LoyalityCard/View/Footer";
+
+import DeleteHeader from "@/modules/Modal/LoyalityCard/Delete/Header";
+import DeleteBody from "@/modules/Modal/LoyalityCard/Delete/Body";
+import DeleteFooter from "@/modules/Modal/LoyalityCard/Delete/Footer";
+import { POLYGON_CHAIN_ID_DEC } from "@/types/Utils";
 
 type Props = {
+    items: LoyalityCardType[],
+    setItems: Function,
+    isSearch: boolean,
+    searchResults: Array<LoyalityCard>,
+    setFormEditView: Function,
+    item: LoyalityCardType|null,
+    setItem: Function,
+    isModalVisible: boolean,
+    setIsModalVisible: Function,
+    isDeleteModalVisible: boolean,
+    setIsDeleteModalVisible: Function,
     vault: Contract | null
 }
-const LoyalityList : FC<Props> = ({vault}) => {
+const LoyalityList : FC<Props> = ({
+                                      items,
+                                      setItems,
+                                      isSearch,
+                                      searchResults,
+                                      setFormEditView,
+                                      item,
+                                      setItem,
+                                      isModalVisible,
+                                      setIsModalVisible,
+                                      isDeleteModalVisible,
+                                      setIsDeleteModalVisible,
+                                      vault
+}) => {
 
     const { address, chainId, isConnected } = useWeb3ModalAccount();
     const { walletProvider } = useWeb3ModalProvider();
 
     const [listIsLoading, setListIsLoading] = useState(true);
-    const [cardsMap, setCardsMap] = useState<any>(<span class={"empty-label"}>No Cards Yet</span>);
+    const [itemsMap, setItemsMap] = useState<any>();
 
-    useEffect(() => {
+    const onModalClose = () => {
+        setItem(null);
+    }
 
-        (async()=> {
+    const fetchItems = async () => {
 
-            if(address && isConnected){
+        setListIsLoading(true);
+        setItems([]);
+        setItemsMap(<span className={"empty-label"}>No Loyality Cards Yet</span>);
 
-                if(chainId == CHAIN_ID_DEC){
+        try {
+
+            if (address && isConnected){
+
+                if(chainId == POLYGON_CHAIN_ID_DEC){
 
                     const addresses = await vault['getItem']( ItemType.LOYALITY_CARD, {from: address});
 
@@ -34,24 +74,23 @@ const LoyalityList : FC<Props> = ({vault}) => {
                         const provider = new BrowserProvider(walletProvider);
                         const signer = await provider.getSigner();
 
-                        const cards: LoyalityCardType[] = [];
-
                         for (const _address of addresses) {
 
                             const contract = new Contract(_address, LoyABI, signer);
                             const card = await contract['expose']({from: address});
 
-                            cards.push({
+                            items.push({
                                 name: card[0],
                                 number: card[1],
                                 address: _address
                             } as LoyalityCardType );
 
+                            setItems(items);
+
                         }
 
-                        console.log("Cards",cards);
-                        setCardsMap(
-                            cards.map( (item: LoyalityCardType) => <LoyalityCard item={item} vault={vault} /> )
+                        setItemsMap(
+                            items.map( (item: LoyalityCardType) => <LoyalityCard item={item} setFormEditView={setFormEditView} setItem={setItem} vault={vault} key={item.address}  setIsModalVisible={setIsModalVisible} setIsDeleteModalVisible={setIsDeleteModalVisible}/> )
                         );
 
                     }
@@ -62,6 +101,19 @@ const LoyalityList : FC<Props> = ({vault}) => {
 
             }
 
+        }catch (e) {
+            console.log(e);
+            alert(e.message);
+            setListIsLoading(false);
+        }
+
+    }
+
+
+    useEffect(() => {
+
+        (async()=> {
+            await fetchItems();
         })();
 
     }, []);
@@ -78,11 +130,32 @@ const LoyalityList : FC<Props> = ({vault}) => {
                             </div>
                         </> :
                         <>
-                            { cardsMap }
+                            {
+                                isSearch ? searchResults : itemsMap
+                            }
                         </>
                 }
 
             </div>
+
+            <Modal
+                visible={isModalVisible}
+                setVisible={setIsModalVisible}
+                header={<Header item={item} />}
+                body={<Body item={item} />}
+                footer={<Footer item={item} />}
+                onClose={onModalClose}
+            />
+
+            <Modal
+                visible={isDeleteModalVisible}
+                setVisible={setIsDeleteModalVisible}
+                header={<DeleteHeader item={item} />}
+                body={<DeleteBody item={item} />}
+                footer={<DeleteFooter fetchItems={fetchItems} setIsDeleteModalVisible={setIsDeleteModalVisible} setItem={setItem} item={item} vault={vault} />}
+                onClose={onModalClose}
+            />
+
         </>
     )
 }

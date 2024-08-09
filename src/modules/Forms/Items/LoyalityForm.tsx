@@ -1,21 +1,21 @@
 
 import React, {FC, useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
-import { Contract } from "ethers";
-import { useWeb3ModalAccount } from '@web3modal/ethers/react';
-import {CHAIN_ID_DEC} from "@/common/contract/UserVault/Contract";
-import {ItemType} from "@/types/ItemType";
+import { BrowserProvider, Contract } from "ethers";
+import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
+import { ABI as LoyABI } from "@/common/contract/Items/LoyalityCardContract";
 import LoyalityCardType from "@/types/Items/LoyalityCardType";
-import LoyalityCard from "@/modules/Items/LoyalityCard";
+import { POLYGON_CHAIN_ID_DEC } from "@/types/Utils";
 
 type Props = {
+    isCreate: boolean,
     vault: Contract | null,
-    setListView: Function
+    setListView: Function,
+    item?: LoyalityCardType|null
 }
-const LoyalityForm : FC<Props> = ({vault, setListView}) => {
+const LoyalityForm : FC<Props> = ({isCreate, vault, setListView, item}) => {
 
-    const navigate = useNavigate();
     const { address, chainId, isConnected } = useWeb3ModalAccount();
+    const { walletProvider } = useWeb3ModalProvider();
 
     const [isLoading, setIsLoading] = useState(false);
     const [name, setName] = useState('');
@@ -48,29 +48,68 @@ const LoyalityForm : FC<Props> = ({vault, setListView}) => {
             return;
         }
 
-        if(_number.length > 40){
+        if(_number.length > 20){
             setError("Number must be less than 20 characters.");
             setIsLoading(false);
             return;
         }
 
-        await handleDeploy(_name, _number);
+        if(!isCreate && item){
+
+            if(_name == item.name && _number == item.number){
+                setError("No changes were made.");
+                setIsLoading(false);
+                return;
+            }
+
+        }
+
+        await handleTransaction( _name, _number );
 
     }
 
-    const handleDeploy = async (_name: string, _number: string) => {
+    useEffect(() => {
+
+        if(!isCreate && item){
+            setName(item.name);
+            setNumber(item.number);
+        }else{
+            setName("");
+            setNumber("");
+        }
+
+    }, [isCreate]);
+
+    const handleTransaction = async ( _name: string, _number: string ) => {
 
         try{
             if(address && isConnected){
 
-                if(chainId == CHAIN_ID_DEC){
+                if(chainId == POLYGON_CHAIN_ID_DEC){
 
-                    const card = await vault['createLoyalityCard']( _name, _number, {from: address} );
+                    let card;
 
-                    setName("");
-                    setNumber("");
-                    setError("");
-                    setListView();
+                    if(isCreate){
+                        card = await vault['createLoyalityCard']( _name, _number, {from: address} );
+                    }else{
+
+                        const provider = new BrowserProvider(walletProvider);
+                        const signer = await provider.getSigner();
+                        const contract = new Contract(item.address, LoyABI, signer);
+
+                        card = await contract['setItem']( _name, _number, {from: address} );
+
+                    }
+
+
+                    card.wait().then( () => {
+
+                        setName("");
+                        setNumber("");
+                        setError("");
+                        setListView();
+
+                    });
 
                 }
 
@@ -106,11 +145,11 @@ const LoyalityForm : FC<Props> = ({vault, setListView}) => {
                         {isLoading ?
                             <>
                                 <span className="spinner-border text-light" role="status"></span>
-                                &nbsp; Creating...
+                                &nbsp; {isCreate ? "Creating..." : "Updating..."}
                             </>
                             :
                             <>
-                                Create
+                                {isCreate ? "Create" : "Update"}
                             </>
                         }
                     </button>

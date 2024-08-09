@@ -1,8 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
 
-
-@import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&display=swap');
-
 .arimo{
     font-family: "Arimo", sans-serif;
     font-optical-sizing: auto;
@@ -43,7 +40,7 @@ label{
     flex-basis: 40%;
     font-size: 1.2vw;
     font-weight: bold;
-    letter-spacing: 0.1vw;
+    letter-spacing: 0.5vw;
     text-decoration: none !important;
     color: white;
 }

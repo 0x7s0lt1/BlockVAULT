@@ -3,9 +3,9 @@
 import React, {FC, useEffect, useState} from "react";
 import { BrowserProvider, Contract } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider, useSwitchNetwork  } from '@web3modal/ethers/react';
-import { CHAIN_ID_DEC, ADDRESS, ABI } from "@/common/contract/Manager/Contract";
-import {DEFAULT_ADDRESS} from "@/common/utils";
-import {ABI as VaultABI} from "@/common/contract/UserVault/Contract";
+import { ADDRESS as ManagerAddress, ABI as ManagerABI } from "@/common/contract/Manager/Contract";
+import { ABI as VaultABI } from "@/common/contract/UserVault/Contract";
+import { POLYGON_CHAIN_ID_DEC, DEFAULT_ADDRESS } from "@/types/Utils";
 
 type Props = {
     setVault: Function
@@ -28,25 +28,31 @@ const CreateVault : FC<Props> = ({setVault}) => {
 
             if(address && isConnected){
 
-                if(chainId == CHAIN_ID_DEC){
+                if(chainId == POLYGON_CHAIN_ID_DEC){
 
                     const provider = new BrowserProvider(walletProvider);
                     const signer = await provider.getSigner();
-                    const contract = new Contract(ADDRESS, ABI, signer);
+                    const contract = new Contract( ManagerAddress, ManagerABI, signer );
 
                     await contract['createVault']({from: address});
 
                     setStatusMessage("Deploying Contract...");
 
-                    const vlt_addr = await contract['getVaultByOwner']({from: address});
+                    const vaultAddr = await contract['getVaultByOwner']({from: address});
 
-                    if(vault_addr != DEFAULT_ADDRESS){
-                        setVault(new Contract(vault_addr, VaultABI, signer));
-                    }
+                    vaultAddr.wait().then((receipt: any) => {
 
-                    setIsLoading(false);
+                        if(vault_addr != DEFAULT_ADDRESS){
+                            setVault( new Contract( vaultAddr, VaultABI, signer ) );
+                        }
+
+                        setIsLoading(false);
+
+                    })
 
                 }
+
+                //TODO: force polyon mainnet ?
 
             }
 
@@ -66,15 +72,21 @@ const CreateVault : FC<Props> = ({setVault}) => {
         <>
             <section className="crt-vlt-wrapper">
                 <div className="card">
+
                     <p className="card-text">
-                        To create a vault need to deploy a smart contract that manage all your secrets.
-                        It cost some gas to deploy the smart contract.
-                        Choose Polygon Mainnet and make sore you have enough MATIC to cover the gas. (0.04$ - 0.08$)
+                        To set up a vault, you'll need to deploy a smart contract that securely manages all your
+                        secrets.
+                        Please note that deploying the smart contract requires a small gas fee.
                         <br/><br/>
-                        If everything is ok, click the button below and confirm the transaction.
+                        We recommend using the Polygon Mainnet, so ensure you have sufficient MATIC in your wallet to
+                        cover the gas costs, which typically range from $0.04 to $0.08.
+                        <br/><br/>
+                        Once you're ready, simply click the button below and confirm the transaction.
                         <br/>
+                        <br/><br/>
 
                     </p>
+
                     <button className="crt-vlt-btn" onClick={handleClick}>
                         {
                             isLoading ?
@@ -83,13 +95,14 @@ const CreateVault : FC<Props> = ({setVault}) => {
                                 </span>
                                     &nbsp; {statusMessage}
                                 </>
-                                : "⬆️ CREATE VAULT"
+                                : "CREATE VAULT"
                         }
                     </button>
 
                     <div className="card-err-msg">
                         {error && error}
                     </div>
+
                 </div>
             </section>
         </>
