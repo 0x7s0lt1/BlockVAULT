@@ -3,7 +3,7 @@ import React, {FC, useEffect, useState} from "react";
 import { BrowserProvider, Contract } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
 import { ABI as PswABI } from "@/common/contract/Items/PasswordContract";
-import { POLYGON_CHAIN_ID_DEC } from "@/types/Utils";
+import { CHAINS } from "@/types/Utils";
 import PasswordType from "@/types/Items/PasswordType";
 
 type Props = {
@@ -112,7 +112,7 @@ const PasswordForm : FC<Props> = ({isCreate, vault, setListView, item}) => {
         try{
             if(address && isConnected){
 
-                if(chainId == POLYGON_CHAIN_ID_DEC){
+                if( CHAINS.get(chainId) !== undefined ){
 
                     let card;
 
@@ -175,10 +175,11 @@ const PasswordForm : FC<Props> = ({isCreate, vault, setListView, item}) => {
                            onChange={handlePasswordChange}/>
                 </div>
 
+                <p className={"form-error"}>
+                    {error}
+                </p>
+
                 <div className={"form-footer"}>
-                    <p className={"form-error"}>
-                        {error}
-                    </p>
                     <button onClick={handleSubmit} disabled={isLoading} className={"btn-hover btn-circle submit-btn"}>
                         {isLoading ?
                             <>

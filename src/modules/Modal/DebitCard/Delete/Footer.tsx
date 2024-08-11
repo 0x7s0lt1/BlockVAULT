@@ -51,7 +51,7 @@ const Footer : FC<Props> = ({ fetchItems, item, setIsDeleteModalVisible, setItem
             <div className={'loy-del-footer'}>
                 <p className={"card-err-msg"}>{error}</p>
                 {
-                    !isLoading && <button onClick={handleCancel} className={"btn-hover btn-circle"}>Cancel</button>
+                    !isLoading && <button onClick={handleCancel}  className={"btn-hover btn-circle"}>Cancel</button>
                 }
                 <button onClick={handleDelete} disabled={isLoading} className={"btn-hover btn-circle"}>
                     {isLoading ?

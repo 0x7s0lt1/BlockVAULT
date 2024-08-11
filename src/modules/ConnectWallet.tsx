@@ -8,9 +8,9 @@ const ConnectWallet : FC = () => {
         <>
             <section className="crt-vlt-wrapper">
                 <div className="card">
-                    <p className="card-text">
-                        Please connect your wallet and choose Polygon Mainnet.
-                    </p>
+                    <h1 className="card-text">
+                        Please connect your wallet.
+                    </h1>
                     <w3m-button balance="hide" size="md"/>
                 </div>
             </section>

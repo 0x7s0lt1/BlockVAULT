@@ -14,10 +14,9 @@ import Footer from "@/modules/Modal/Password/View/Footer";
 import DeleteHeader from "@/modules/Modal/Password/Delete/Header";
 import DeleteBody from "@/modules/Modal/Password/Delete/Body";
 import DeleteFooter from "@/modules/Modal/Password/Delete/Footer";
-import { POLYGON_CHAIN_ID_DEC } from "@/types/Utils";
+import { CHAINS } from "@/types/Utils";
 
 type Props = {
-    items: PasswordType[],
     setItems: Function,
     isSearch: boolean,
     searchResults: Array<Password>,
@@ -31,7 +30,6 @@ type Props = {
     vault: Contract | null
 }
 const PasswordList : FC<Props> = ({
-                                      items,
                                       setItems,
                                       isSearch,
                                       searchResults,
@@ -63,7 +61,7 @@ const PasswordList : FC<Props> = ({
         try {
             if (address && isConnected){
 
-                if(chainId == POLYGON_CHAIN_ID_DEC){
+                if( CHAINS.get(chainId) !== undefined ){
 
                     const addresses = await vault['getItem']( ItemType.PASSWORD, {from: address});
 
@@ -72,12 +70,14 @@ const PasswordList : FC<Props> = ({
                         const provider = new BrowserProvider(walletProvider);
                         const signer = await provider.getSigner();
 
+                        const _items: PasswordType = [];
+                        
                         for (const _address of addresses) {
 
                             const contract = new Contract(_address, PswABI, signer);
                             const card = await contract['expose']({from: address});
 
-                            items.push({
+                            _items.push({
                                 name: card[0],
                                 url: card[1],
                                 user_name: card[2],
@@ -85,12 +85,11 @@ const PasswordList : FC<Props> = ({
                                 address: _address
                             } as PasswordType );
 
-                            setItems(items);
-
                         }
 
+                        setItems(_items);
                         setItemsMap(
-                            items.map( (item: PasswordType) => <Password item={item} setFormEditView={setFormEditView} setItem={setItem} vault={vault} key={item.address + Math.random()}  setIsModalVisible={setIsModalVisible} setIsDeleteModalVisible={setIsDeleteModalVisible}/> )
+                            _items.map( (item: PasswordType) => <Password item={item} setFormEditView={setFormEditView} setItem={setItem} vault={vault} key={item.address + Math.random()}  setIsModalVisible={setIsModalVisible} setIsDeleteModalVisible={setIsDeleteModalVisible}/> )
                         );
 
                     }
@@ -148,6 +147,7 @@ const PasswordList : FC<Props> = ({
 
             <Modal
                 visible={isDeleteModalVisible}
+                closeable={false}
                 setVisible={setIsDeleteModalVisible}
                 header={<DeleteHeader item={item} />}
                 body={<DeleteBody item={item} />}

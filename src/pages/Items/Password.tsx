@@ -79,7 +79,6 @@ const Password : FC<Props> = ({vault}) => {
                 {
                     isListView ?
                         <PasswordList
-                            items={items}
                             setItems={setItems}
                             isSearch={isSearch}
                             searchResults={searchResults}

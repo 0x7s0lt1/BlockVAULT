@@ -1,17 +1,17 @@
 
 import { FC, useState } from "react";
-import { Contract, parseEther } from "ethers";
-import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
-import { POLYGON_CHAIN_ID_DEC } from "@/types/Utils";
+import { Contract, parseEther, formatEther } from "ethers";
+import { useWeb3ModalAccount } from '@web3modal/ethers/react';
+import { CHAINS } from "@/types/Utils";
 
 type Props = {
+    balance: BigInt,
     fetchBalance: Function,
     vault: Contract | null
 }
-const WithdrawForm : FC<Props> = ({ fetchBalance, vault }) => {
+const WithdrawForm : FC<Props> = ({ balance, fetchBalance, vault }) => {
 
     const { address, chainId, isConnected } = useWeb3ModalAccount();
-    const { walletProvider } = useWeb3ModalProvider();
 
     const [isLoading, setIsLoading] = useState(false);
     const [amount, setAmount] = useState<number|"">("");
@@ -35,8 +35,18 @@ const WithdrawForm : FC<Props> = ({ fetchBalance, vault }) => {
             return;
         }
 
-        if(_amount < 0){
+        if(_amount <= 0){
             setError("Amount must be greater than 0.");
+            setIsLoading(false);
+            return;
+        }
+
+        if(balance < _amount){
+
+            setError(
+                balance <= 0 ? "No balance to withdraw." :
+                `Maximum amount available to withdraw is ${balance} ${CHAINS.get(chainId)?.currency}.`
+            );
             setIsLoading(false);
             return;
         }
@@ -51,7 +61,7 @@ const WithdrawForm : FC<Props> = ({ fetchBalance, vault }) => {
         try{
             if(address && isConnected){
 
-                if(chainId == POLYGON_CHAIN_ID_DEC){
+                if(CHAINS.get(chainId) !== undefined){
 
                     _amount = parseEther( _amount.toString() );
 
@@ -61,9 +71,9 @@ const WithdrawForm : FC<Props> = ({ fetchBalance, vault }) => {
                     withdraw.wait().then( async () => {
 
                         await fetchBalance();
-                        //TODO: send back to main menu
 
                         setAmount("");
+                        setError(undefined);
                         setIsLoading(false);
 
                     });
@@ -84,17 +94,18 @@ const WithdrawForm : FC<Props> = ({ fetchBalance, vault }) => {
             <div className={"form-wrapper"}>
 
                 <div className={"form-slot"}>
-                    <h5 className={"form-label"}>Amount (MATIC)</h5>
+                    <h5 className={"form-label"}>{`Amount (${CHAINS.get(chainId)?.currency})`}</h5>
                     <input className={"form-input"} type={"text"} name={"amount"} value={amount}
                            onChange={handleAmountChange}/>
+                    <p className={"mt-2 mx-2"}>{`Contract Balance: ${balance}`}</p>
+                    <p className={"form-error"}>
+                        {error}
+                    </p>
                 </div>
 
                 {/*//TODO: max button*/}
 
                 <div className={"form-footer"}>
-                    <p className={"form-error"}>
-                        {error}
-                    </p>
                     <button onClick={handleSubmit} disabled={isLoading} className={"btn-hover btn-circle submit-btn"}>
                         {isLoading ?
                             <>

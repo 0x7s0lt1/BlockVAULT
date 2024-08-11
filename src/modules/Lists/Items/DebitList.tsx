@@ -3,7 +3,7 @@ import React, {FC, useEffect, useState} from "react";
 import { BrowserProvider, Contract } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
 import { ABI as DebABI } from "@/common/contract/Items/DebitCardContract";
-import {ItemType} from "@/types/ItemType";
+import { ItemType } from "@/types/ItemType";
 import Modal from "@/modules/Modal/Modal";
 import Header from "@/modules/Modal/DebitCard/View/Header";
 import Body from "@/modules/Modal/DebitCard/View/Body";
@@ -13,11 +13,10 @@ import DeleteHeader from "@/modules/Modal/DebitCard/Delete/Header";
 import DeleteBody from "@/modules/Modal/DebitCard/Delete/Body";
 import DeleteFooter from "@/modules/Modal/DebitCard/Delete/Footer";
 import DebitCardType from "@/types/Items/DebitCardType";
-import { POLYGON_CHAIN_ID_DEC } from "@/types/Utils";
+import { CHAINS } from "@/types/Utils";
 import DebitCard from "@/modules/Items/DebitCard";
 
 type Props = {
-    items: DebitCardType[],
     setItems: Function,
     isSearch: boolean,
     searchResults: Array<DebitCard>,
@@ -31,7 +30,6 @@ type Props = {
     vault: Contract | null
 }
 const DebitList : FC<Props> = ({
-                                      items,
                                       setItems,
                                       isSearch,
                                       searchResults,
@@ -63,7 +61,7 @@ const DebitList : FC<Props> = ({
         try {
             if (address && isConnected){
 
-                if(chainId == POLYGON_CHAIN_ID_DEC){
+                if( CHAINS.get(chainId) !== undefined ){
 
                     const addresses = await vault['getItem']( ItemType.DEBIT_CARD, {from: address});
 
@@ -72,26 +70,27 @@ const DebitList : FC<Props> = ({
                         const provider = new BrowserProvider(walletProvider);
                         const signer = await provider.getSigner();
 
+                        const _items: DebitCardType[] = [];
+
                         for (const _address of addresses) {
 
                             const contract = new Contract(_address, DebABI, signer);
                             const card = await contract['expose']({from: address});
 
-                            items.push({
+                            _items.push({
                                 name: card[0],
-                                cards_id: card[1],
+                                card_id: card[1],
                                 name_on_card: card[2],
                                 expire_at: card[3],
                                 cvv: card[4],
                                 address: _address
                             } as DebitCardType );
 
-                            setItems(items);
-
                         }
 
+                        setItems(_items);
                         setItemsMap(
-                            items.map( (item: DebitCardType) => <DebitCard item={item} setFormEditView={setFormEditView} setItem={setItem} vault={vault} key={item.address + Math.random()}  setIsModalVisible={setIsModalVisible} setIsDeleteModalVisible={setIsDeleteModalVisible}/> )
+                            _items.map( (item: DebitCardType) => <DebitCard item={item} setFormEditView={setFormEditView} setItem={setItem} vault={vault} key={item.address + Math.random()}  setIsModalVisible={setIsModalVisible} setIsDeleteModalVisible={setIsDeleteModalVisible}/> )
                         );
 
                     }
@@ -149,6 +148,7 @@ const DebitList : FC<Props> = ({
 
             <Modal
                 visible={isDeleteModalVisible}
+                closeable={false}
                 setVisible={setIsDeleteModalVisible}
                 header={<DeleteHeader item={item} />}
                 body={<DeleteBody item={item} />}

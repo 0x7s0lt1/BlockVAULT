@@ -8,13 +8,24 @@ const Body : FC<Props> = ({ item }) => {
 
     return (
         <>
-            <div>
+            <div className={"deb-card"}>
                 <h1 className={"text-barcode text-white"}>
                     {item ? item.number : ""}
                 </h1>
-                <span className={"text-white loy-card-number"}>
-                    {item ? item.number : ""}
-                </span>
+                <p className={"text-white deb-card-number"}>
+                    {item ? item.card_id : ""}
+                </p>
+                <p className={"text-white deb-card-name"}>
+                    {item ? item.name_on_card : ""}
+                </p>
+                <div className={"deb-card-wrapper"}>
+                    <span className={"text-white deb-card-expire"}>
+                        {item ? item.expire_at.toString().slice(0,2) + "/" + item.expire_at.toString().slice(2,4) : ""}
+                    </span>
+                    <span className={"text-white deb-card-cvv"}>
+                        {item ? "CVV: " + item.cvv.toString() : ""}
+                    </span>
+                </div>
             </div>
         </>
     )

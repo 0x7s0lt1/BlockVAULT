@@ -14,10 +14,9 @@ import Footer from "@/modules/Modal/LoyalityCard/View/Footer";
 import DeleteHeader from "@/modules/Modal/LoyalityCard/Delete/Header";
 import DeleteBody from "@/modules/Modal/LoyalityCard/Delete/Body";
 import DeleteFooter from "@/modules/Modal/LoyalityCard/Delete/Footer";
-import { POLYGON_CHAIN_ID_DEC } from "@/types/Utils";
+import { CHAINS } from "@/types/Utils";
 
 type Props = {
-    items: LoyalityCardType[],
     setItems: Function,
     isSearch: boolean,
     searchResults: Array<LoyalityCard>,
@@ -31,7 +30,6 @@ type Props = {
     vault: Contract | null
 }
 const LoyalityList : FC<Props> = ({
-                                      items,
                                       setItems,
                                       isSearch,
                                       searchResults,
@@ -65,7 +63,7 @@ const LoyalityList : FC<Props> = ({
 
             if (address && isConnected){
 
-                if(chainId == POLYGON_CHAIN_ID_DEC){
+                if( CHAINS.get(chainId) !== undefined ){
 
                     const addresses = await vault['getItem']( ItemType.LOYALITY_CARD, {from: address});
 
@@ -74,23 +72,24 @@ const LoyalityList : FC<Props> = ({
                         const provider = new BrowserProvider(walletProvider);
                         const signer = await provider.getSigner();
 
+                        const _items: Array<LoyalityCardType> = [];
+
                         for (const _address of addresses) {
 
                             const contract = new Contract(_address, LoyABI, signer);
                             const card = await contract['expose']({from: address});
 
-                            items.push({
+                            _items.push({
                                 name: card[0],
                                 number: card[1],
                                 address: _address
                             } as LoyalityCardType );
 
-                            setItems(items);
-
                         }
 
+                        setItems(_items);
                         setItemsMap(
-                            items.map( (item: LoyalityCardType) => <LoyalityCard item={item} setFormEditView={setFormEditView} setItem={setItem} vault={vault} key={item.address}  setIsModalVisible={setIsModalVisible} setIsDeleteModalVisible={setIsDeleteModalVisible}/> )
+                            _items.map( (item: LoyalityCardType) => <LoyalityCard item={item} setFormEditView={setFormEditView} setItem={setItem} vault={vault} key={item.address}  setIsModalVisible={setIsModalVisible} setIsDeleteModalVisible={setIsDeleteModalVisible}/> )
                         );
 
                     }
@@ -103,7 +102,6 @@ const LoyalityList : FC<Props> = ({
 
         }catch (e) {
             console.log(e);
-            alert(e.message);
             setListIsLoading(false);
         }
 
@@ -149,6 +147,7 @@ const LoyalityList : FC<Props> = ({
 
             <Modal
                 visible={isDeleteModalVisible}
+                closeable={false}
                 setVisible={setIsDeleteModalVisible}
                 header={<DeleteHeader item={item} />}
                 body={<DeleteBody item={item} />}

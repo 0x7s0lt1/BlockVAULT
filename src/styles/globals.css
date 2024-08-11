@@ -5,6 +5,10 @@
     font-family: Rubik;
     src: url('/fonts/RubikDoodleShadow-Regular.ttf');
 }
+@font-face {
+    font-family: Barcode;
+    src: url('/fonts/IDAutomationHC39M-Code-39-Barcode.ttf');
+}
 :root{
     --dark : #1a1919;
     --light-dark: #2a2a2a;
@@ -16,10 +20,11 @@
 }
 
 .text-barcode {
-    font-family: "Libre Barcode 39 Extended", system-ui;
-    font-weight: 400;
+    /*font-family: "Libre Barcode 39 Extended", system-ui;*/
+    font-family: Barcode, system-ui;
+    font-weight: 100;
     font-style: normal;
-    font-size: 6rem;
+    font-size: 3rem;
 }
 
 
@@ -61,6 +66,8 @@ html,body{
     backdrop-filter: blur(5px);
     border-radius: 29px;
     border: 2px solid white;
+
+    box-shadow: 23px 23px 1px whitesmoke;
 }
 
 .card{
@@ -78,6 +85,7 @@ html,body{
 .card-err-msg{
     color: red;
     font-weight: bold;
+    margin-left: 10px;
 }
 
 
@@ -94,8 +102,8 @@ html,body{
     font-weight: bold;
 }
 .crt-vlt-btn:hover{
-    background: whitesmoke;
-    color: #1a1919;
+    background: whitesmoke !important;
+    color: #1a1919 !important;
 }
 .dash{
     display: flex;
@@ -291,7 +299,7 @@ nav{
 .form-footer{
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: end;
     align-items: center;
     width: 100%;
     padding: 20px;
@@ -301,7 +309,8 @@ nav{
     color: red;
     flex-basis: 40%;
     font-size: 0.8vw;
-    padding-left: 20px;
+    padding-left: 10px;
+    min-width: 90%;
 }
 .submit-btn{
     font-size: 1.5vw;
@@ -347,6 +356,7 @@ nav{
 }
 .link-purple:hover{
     color: var(--polygon-purple) !important;
+    cursor: pointer;
 }
 
 .text-decoration-none{

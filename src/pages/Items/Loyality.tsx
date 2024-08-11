@@ -72,7 +72,6 @@ const Loyality : FC<Props> = ({vault}) => {
                 {
                     isListView ?
                         <LoyalityList
-                            items={items}
                             setItems={setItems}
                             isSearch={isSearch}
                             searchResults={searchResults}

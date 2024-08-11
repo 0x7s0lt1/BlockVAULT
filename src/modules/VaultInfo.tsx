@@ -5,10 +5,11 @@ import { useWeb3ModalAccount } from '@web3modal/ethers/react';
 import { Link } from "react-router-dom";
 
 type Props = {
+    ticker: string|undefined
     balance: number
     vault: Contract | null
 }
-const VaultInfo : FC<Props> = ({ balance, vault }) => {
+const VaultInfo : FC<Props> = ({ ticker, balance, vault }) => {
 
     const { address, chainId, isConnected } = useWeb3ModalAccount();
 
@@ -18,7 +19,7 @@ const VaultInfo : FC<Props> = ({ balance, vault }) => {
                 <span className="vlt-text">
                     <h1 className="value">
                         {
-                            balance !== undefined ? balance + " MATIC" :  <span className="spinner-border text-light" role="status"></span>
+                            balance !== undefined ? `${balance} ${ticker}` :  <span className="spinner-border text-light" role="status"></span>
                         }
                     </h1>
                 </span>

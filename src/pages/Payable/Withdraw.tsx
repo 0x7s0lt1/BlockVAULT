@@ -7,7 +7,7 @@ type Props = {
     fetchBalance: Function,
     vault: Contract | null
 }
-const Withdraw : FC<Props> = ({ fetchBalance, vault}) => {
+const Withdraw : FC<Props> = ({ balance, fetchBalance, vault }) => {
 
     return (
         <>
@@ -18,6 +18,7 @@ const Withdraw : FC<Props> = ({ fetchBalance, vault}) => {
             </div>
             <div className={"page-body border-white"}>
                 <WithdrawForm
+                    balance={balance}
                     fetchBalance={fetchBalance}
                     vault={vault}
                 />

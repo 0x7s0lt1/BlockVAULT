@@ -9,7 +9,7 @@ import DebitCard from "@/modules/Items/DebitCard";
 type Props = {
     vault: Contract | null
 }
-const Debit : FC<Props> = ({vault}) => {
+const Debit : FC<Props> = ({ vault }) => {
 
     const [isCreate, setIsCreate] = useState(false);
     const [item, setItem] = useState<DebitCardType|null>(null);
@@ -80,7 +80,6 @@ const Debit : FC<Props> = ({vault}) => {
                 {
                     isListView ?
                         <DebitList
-                            items={items}
                             setItems={setItems}
                             isSearch={isSearch}
                             searchResults={searchResults}

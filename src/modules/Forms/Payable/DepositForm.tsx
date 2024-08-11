@@ -1,8 +1,8 @@
 
-import { FC, useState } from "react";
-import { Contract, parseEther } from "ethers";
+import { FC, useState, useEffect } from "react";
+import { BrowserProvider, Contract, parseEther, formatEther } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
-import { POLYGON_CHAIN_ID_DEC } from "@/types/Utils";
+import { CHAINS } from "@/types/Utils";
 
 type Props = {
     fetchBalance: Function
@@ -15,6 +15,7 @@ const DepositForm : FC<Props> = ({ fetchBalance, vault }) => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [amount, setAmount] = useState<number|"">("");
+    const [userBalance, setUserBalance] = useState<BigInt>(0);
     const [error, setError] = useState<string>();
 
 
@@ -35,7 +36,7 @@ const DepositForm : FC<Props> = ({ fetchBalance, vault }) => {
             return;
         }
 
-        if(_amount < 0){
+        if(_amount <= 0){
             setError("Amount must be greater than 0.");
             setIsLoading(false);
             return;
@@ -44,6 +45,16 @@ const DepositForm : FC<Props> = ({ fetchBalance, vault }) => {
         await handleTransaction( _amount );
 
     }
+    
+    useEffect(() => {
+        (async()=>{
+
+            const provider = new BrowserProvider(walletProvider);
+            const balance = await provider.getBalance(address);
+            setUserBalance(formatEther(balance));
+
+        })();
+    }, [chainId]);
 
 
     const handleTransaction = async ( _amount: number ) => {
@@ -51,7 +62,7 @@ const DepositForm : FC<Props> = ({ fetchBalance, vault }) => {
         try{
             if(address && isConnected){
 
-                if(chainId == POLYGON_CHAIN_ID_DEC){
+                if( CHAINS.get(chainId) !== undefined ){
 
                     _amount = parseEther( _amount.toString() );
 
@@ -60,10 +71,10 @@ const DepositForm : FC<Props> = ({ fetchBalance, vault }) => {
 
                     deposit.wait().then( async () => {
 
-                       //TODO: send back to main menu
-
                         await fetchBalance();
+
                         setAmount("");
+                        setError(undefined);
                         setIsLoading(false);
 
                     });
@@ -84,15 +95,16 @@ const DepositForm : FC<Props> = ({ fetchBalance, vault }) => {
             <div className={"form-wrapper"}>
 
                 <div className={"form-slot"}>
-                    <h5 className={"form-label"}>Amount (MATIC)</h5>
+                    <h5 className={"form-label"}>{`Amount (${CHAINS.get(chainId)?.currency})`}</h5>
                     <input className={"form-input"} type={"text"} name={"amount"} value={amount}
                            onChange={handleAmountChange}/>
-                </div>
-
-                <div className={"form-footer"}>
+                    <p className={"mt-2 mx-2"}>{`Balance: ${userBalance}`}</p>
                     <p className={"form-error"}>
                         {error}
                     </p>
+                </div>
+
+                <div className={"form-footer"}>
                     <button onClick={handleSubmit} disabled={isLoading} className={"btn-hover btn-circle submit-btn"}>
                         {isLoading ?
                             <>

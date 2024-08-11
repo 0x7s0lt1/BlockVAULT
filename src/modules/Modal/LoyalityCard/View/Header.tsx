@@ -8,7 +8,13 @@ const Header : FC<Props> = ({ item }) => {
 
     return (
         <>
-            {item ? item.name : ""}
+            <h3>{item ? item.name : ""}</h3>
+            <p>
+                <a target={"_blank"} href={"https://polygonscan.com/address/" + item?.address}
+                   className={"link-purple text-white text-decoration-none"}>
+                    {item ? item.address : ""}
+                </a>
+            </p>
         </>
     )
 }

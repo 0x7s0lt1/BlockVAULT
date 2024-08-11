@@ -8,11 +8,7 @@ const Footer : FC<Props> = ({ item }) => {
 
     return (
         <>
-            <p>
-                <a target={"_blank"} href={"https://polygonscan.com/address/" + item?.address} className={"link-purple text-white text-decoration-none"}>
-                    { item ? item.address : "" }
-                </a>
-            </p>
+
         </>
     )
 }

@@ -8,7 +8,10 @@ const Header : FC<Props> = ({ item }) => {
 
     return (
         <>
-            {`Delete ${item ? item.name : ""}`}
+            <h3>{`Delete`}</h3>
+            <p>
+                {item ? item.name : ""}
+            </p>
         </>
     )
 }

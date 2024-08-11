@@ -11,6 +11,9 @@ dialog{
     padding: 20px;
     background: #1a1919;
     color: whitesmoke;
+
+    box-shadow: -23px -23px 1px whitesmoke;
+    padding-bottom: 25px;
 }
 .dialog-inner{
     display: flex;
@@ -26,35 +29,50 @@ dialog{
 }
 .dialog-title{
     min-width: fit-content;
-    font-size: 1.5vw;
-    font-weight: bold;
     margin-left: 20px;
     letter-spacing: 0.5rem;
+}
+.dialog-title h3{
+    text-transform: uppercase;
+    font-size: 1.5vw;
+    font-weight: bold;
+}
+.dialog-title p {
+    letter-spacing: normal;
+    font-size: 0.5vw;
+    font-weight: normal;
 }
 .dialog-close-wrapper{
     display: flex;
     justify-content: end;
     align-items: center;
     width: 100%;
+    min-height: fit-content;
+    z-index: 10;
 }
 .dialog-close-btn{
     cursor: pointer;
     color: whitesmoke;
-    border: 1px solid whitesmoke;
+    border: 2px solid whitesmoke;
     border-radius: 50%;
     position: absolute;
     top: 2rem;
     right: 2rem;
+    padding: 0px;
+    background: #1a1919;
+    box-shadow: 10px 10px  50px black;
 }
 .dialog-close-btn:hover{
     background: whitesmoke;
     color: black;
+    font-weight: bold;
 }
 .modal-title{
     font-size: 1.5vw;
 }
 .modal-body{
     width: 100%;
+    min-width: 100%;
     max-height: 50%;
     display: flex;
     justify-content: center;
@@ -66,12 +84,53 @@ dialog{
     justify-content: end;
     align-items: center;
 }
-
+.loyal-card{
+    min-width: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 .loy-card-number{
     letter-spacing: 0.5rem;
+    text-align: center;
+
 }
 .loy-del-footer{
     display: flex;
     justify-content: end;
     align-items: center;
+}
+
+.deb-card{
+    border-radius: 25px;
+    padding: 20px;
+    border: 2px solid white;
+    min-width: 70%;
+    max-width: 70%;
+    box-shadow: 23px 23px  1px black;
+}
+.deb-card-number{
+    font-size: 1vw;
+    letter-spacing: 0.2vw;
+}
+.deb-card-name {
+    font-size: 1vw;
+    letter-spacing: 0.2vw;
+    text-transform: uppercase;
+}
+.deb-card-wrapper{
+    display: flex;
+    justify-content: space-between;
+}
+.deb-card-expire{
+
+}
+.deb-card-cvv{
+
+}
+
+.psw-card-wrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }

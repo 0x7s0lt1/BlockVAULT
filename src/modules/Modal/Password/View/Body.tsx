@@ -9,12 +9,20 @@ const Body : FC<Props> = ({ item }) => {
     return (
         <>
             <div>
-                <h1 className={"text-barcode text-white"}>
-                    {item ? item.password : ""}
+                <h1 className={"text-white"}>
+                    <a target={"_blank"} href={item ? item.url : ""}  className={"text-white text-decoration-none link-purple"}>
+                        {item ? item.url : ""}
+                    </a>
                 </h1>
-                <span className={"text-white loy-card-number"}>
-                    {item ? item.password : ""}
-                </span>
+
+                <div className={"psw-card-wrapper"}>
+                     <span className={"text-white psw-card-user-name"}>
+                        User name: &nbsp;<span className={"link-purple"}>{item ? item.user_name : ""}</span>
+                     </span>
+                    <span className={"text-white psw-card-pass"}>
+                        Password:    &nbsp; &nbsp;<span className={"link-purple"}>{item ? item.password : ""}</span>
+                     </span>
+                </div>
             </div>
         </>
     )

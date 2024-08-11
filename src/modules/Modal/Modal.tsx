@@ -47,7 +47,9 @@ const Modal : FC<Props> = ({
                         {
                             closeable ?
                                 <div className={"dialog-close-wrapper"}>
-                                    <X className={"dialog-close-btn"} size={26} onClick={close}/>
+                                    <button className={"dialog-close-btn"} onClick={close} >
+                                        <X size={26} />
+                                    </button>
                                 </div> :
                                 <></>
                         }

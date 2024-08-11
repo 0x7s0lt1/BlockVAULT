@@ -8,7 +8,7 @@ import CreateVault from "@/modules/CreateVault";
 import ConnectWallet from "@/modules/ConnectWallet";
 import { BrowserProvider, Contract, formatUnits } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider, useSwitchNetwork  } from '@web3modal/ethers/react';
-import { ADDRESS as ManagerAddress, ABI as ManagerABI } from "@/common/contract/Manager/Contract";
+import { ABI as ManagerABI, chainIdAddressMap } from "@/common/contract/Manager/Contract";
 import { ABI as VaultABI } from "@/common/contract/UserVault/Contract";
 import { Routes, Route } from "react-router-dom";
 import VaultInfo from "@/modules/VaultInfo";
@@ -18,7 +18,7 @@ import Password from "@/pages/Items/Password";
 import Deposit from "@/pages/Payable/Deposit";
 import Withdraw from "@/pages/Payable/Withdraw";
 import ItemsNav from "@/modules/ItemsNav";
-import { DEFAULT_ADDRESS, POLYGON_CHAIN_ID_DEC } from "@/types/Utils";
+import { CHAINS, DEFAULT_ADDRESS } from "@/types/Utils";
 
 const Index : FC = () => {
 
@@ -26,8 +26,8 @@ const Index : FC = () => {
     const { address, chainId, isConnected } = useWeb3ModalAccount();
     const { walletProvider } = useWeb3ModalProvider();
 
-    const [connected, setConnected] = useState<boolean>(false);
     const [vault, setVault] = useState<Contract|null>(null);
+    const [ticker, setTicker] = useState<string>("UNKNOWN");
     const [balance, setBalance] = useState<BigInt>(0);
 
     const fetchBalance = async () => {
@@ -35,45 +35,48 @@ const Index : FC = () => {
            try{
                const _balance = await vault['getBalance']({from: address});
                setBalance( formatUnits(_balance, 'ether') );
+               setTicker( CHAINS.get(chainId)?.currency );
            }catch (e){
                console.log(e);
            }
         }
     }
 
+    const fetchVault = async () => {
+
+        if( CHAINS.get(chainId) != undefined ){
+
+            const provider = new BrowserProvider(walletProvider);
+            const signer = await provider.getSigner();
+            const contract = new Contract( chainIdAddressMap.get(chainId), ManagerABI, signer );
+
+            const vaultAddr = await contract['getVaultByOwner']({from: address});
+
+            if(vaultAddr != DEFAULT_ADDRESS){
+                setVault( new Contract( vaultAddr, VaultABI, signer ) );
+            }else{
+                setVault(null);
+                setTicker("UNKNOWN");
+            }
+
+        }else{
+            await switchNetwork(CHAINS.get(137)?.chainId);
+        }
+
+    }
+
     useEffect(() => {
 
         (async()=>{
-            
-            if(!address){
-                setConnected(false);
-            }
 
             if(address && isConnected){
-
-                if(chainId == POLYGON_CHAIN_ID_DEC){
-
-                    const provider = new BrowserProvider(walletProvider);
-                    const signer = await provider.getSigner();
-                    const contract = new Contract( ManagerAddress, ManagerABI, signer );
-
-                    const vaultAddr = await contract['getVaultByOwner']({from: address});
-
-                    if(vaultAddr != DEFAULT_ADDRESS){
-                        setVault( new Contract( vaultAddr, VaultABI, signer ) );
-                    }
-
-                    setConnected(true);
-
-                }
-
+                await fetchVault();
                 //TODO: force polyon mainnet ?
-
             }
 
         })();
 
-    }, [address, isConnected]);
+    }, [address]);
 
     useEffect(() => {
         (async ()=>{
@@ -81,28 +84,50 @@ const Index : FC = () => {
         })();
     }, [vault]);
 
+    useEffect(() => {
+
+        if(isConnected){
+
+            (async ()=>{
+                await fetchVault();
+            })();
+
+        }else{
+            setVault(null);
+        }
+
+    }, [isConnected, chainId]);
+
+    useEffect(() => {
+
+        (async ()=>{
+            await fetchVault();
+        })();
+
+    }, []);
+
     return (
         <MainLayout>
 
             <Meta />
 
             {
-                !connected ? <ConnectWallet/> : !vault ? <><CreateVault setVault={setVault}/></> : <></>
+                !isConnected ? <ConnectWallet/> : !vault ? <><CreateVault setVault={setVault}/></> : <></>
             }
 
             <section className={"dash"}>
 
                 {
-                    vault && connected &&
+                    vault && isConnected &&
                     <>
                         <div className={"nav"}>
-                            <VaultInfo balance={balance} vault={vault}/>
+                            <VaultInfo ticker={ticker} balance={balance} vault={vault}/>
                             <ItemsNav/>
                         </div>
                         <div className={"board slot-hover"}>
                             <Routes>
                                 <Route  path="/deposit" element={<Deposit fetchBalance={fetchBalance} vault={vault}/>} ></Route>
-                                <Route  path="/withdraw" element={<Withdraw fetchBalance={fetchBalance} vault={vault}/>} ></Route>
+                                <Route  path="/withdraw" element={<Withdraw balance={balance} fetchBalance={fetchBalance} vault={vault}/>} ></Route>
 
                                 <Route index path="/loyality/:slug" element={<Loyality vault={vault}/>} ></Route>
                                 <Route path="/debit/:slug" element={<Debit vault={vault}/>} ></Route>
