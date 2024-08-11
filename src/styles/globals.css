@@ -312,6 +312,14 @@ nav{
     padding-left: 10px;
     min-width: 90%;
 }
+.form-info{
+    display: inline;
+    color: #9a9a9a;
+    flex-basis: 40%;
+    font-size: 0.8vw;
+    padding-left: 10px;
+    min-width: 90%;
+}
 .submit-btn{
     font-size: 1.5vw;
 }

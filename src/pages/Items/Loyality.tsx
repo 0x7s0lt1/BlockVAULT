@@ -36,7 +36,8 @@ const Loyality : FC<Props> = ({vault}) => {
 
     const isItemIncludes = (item: any, value: string) => {
         return item.name.toLowerCase().includes(value) ||
-            item.number.toLowerCase().includes(value)
+            item.number.toLowerCase().includes(value) ||
+            item.address.toLowerCase().includes(value)
             ;
     }
 

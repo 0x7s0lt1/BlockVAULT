@@ -5,6 +5,7 @@ export const chainIdAddressMap: Map<number, string> = new Map<number, string>([
     [ 11155111,     "0xea61fd270f6c84ab9f6d9e3bb9005fcc95985caa" ], // Sepolia
     [ 8453,         "0xea61fd270f6c84ab9f6d9e3bb9005fcc95985caa" ], // Base
     [ 43114,        "0xea61fd270f6c84ab9f6d9e3bb9005fcc95985caa" ], // Avalanche
+    [ 56,           "0xea61fd270f6c84ab9f6d9e3bb9005fcc95985caa" ], // Binance
     // [ 0, "" ],
     // [ 0, "" ],
     // [ 0, "" ],

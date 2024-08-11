@@ -1,9 +1,10 @@
 
-import React, {FC, useEffect, useState} from "react";
-import { BrowserProvider, Contract } from "ethers";
+import { FC, useEffect, useState } from "react";
+import { BrowserProvider, Contract, formatEther, Signer } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
 import { ABI as DebABI } from "@/common/contract/Items/DebitCardContract";
-import { CHAINS } from "@/types/Utils";
+import { ABI as VaultABI } from "@/common/contract/UserVault/Contract";
+import { CHAINS, getUserBalance } from "@/types/Utils";
 import DebitCardType from "@/types/Items/DebitCardType";
 
 type Props = {
@@ -17,6 +18,15 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
     const { address, chainId, isConnected } = useWeb3ModalAccount();
     const { walletProvider } = useWeb3ModalProvider();
 
+    let provider : BrowserProvider;
+    let signer : Signer;
+    (async()=>{
+        if(walletProvider){
+            provider = new BrowserProvider(walletProvider);
+            signer = await provider.getSigner();
+        }
+    })();
+
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [name, setName] = useState<string>('');
     const [cardId, setCardId] = useState<string>('');
@@ -24,21 +34,58 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
     const [expireAt, setExpireAt] = useState<string>("");
     const [cvv, setCvv] = useState<string>("");
     const [error, setError] = useState<string|null>('');
+    const [gasFee, setGasFee] = useState<any>(0);
 
-    const handleNameChange = (e: any) => {
+    const handleNameChange = async (e: any) => {
         setName(e.target.value);
+        await estimatedGas(
+            name,
+            cardId,
+            nameOnCard,
+            isNaN(parseInt(expireAt)) ? 0 : parseInt(expireAt),
+            isNaN(parseInt(cvv)) ? 0 : parseInt(cvv)
+        );
+
     }
-    const handleCardIdChange = (e: any) => {
+    const handleCardIdChange = async (e: any) => {
         setCardId(e.target.value);
+        await estimatedGas(
+            name,
+            cardId,
+            nameOnCard,
+            isNaN(parseInt(expireAt)) ? 0 : parseInt(expireAt),
+            isNaN(parseInt(cvv)) ? 0 : parseInt(cvv)
+        );
     }
-    const handleNameOnCardChange = (e: any) => {
+    const handleNameOnCardChange = async(e: any) => {
         setNameOnCard(e.target.value);
+        await estimatedGas(
+            name,
+            cardId,
+            nameOnCard,
+            isNaN(parseInt(expireAt)) ? 0 : parseInt(expireAt),
+            isNaN(parseInt(cvv)) ? 0 : parseInt(cvv)
+        );
     }
-    const handleExpireAtChange = (e: any) => {
+    const handleExpireAtChange = async (e: any) => {
         setExpireAt(e.target.value);
+        await estimatedGas(
+            name,
+            cardId,
+            nameOnCard,
+            isNaN(parseInt(expireAt)) ? 0 : parseInt(expireAt),
+            isNaN(parseInt(cvv)) ? 0 : parseInt(cvv)
+        );
     }
-    const handleCvvChange = (e: any) => {
+    const handleCvvChange = async (e: any) => {
         setCvv(e.target.value);
+        await estimatedGas(
+            name,
+            cardId,
+            nameOnCard,
+            isNaN(parseInt(expireAt)) ? 0 : parseInt(expireAt),
+            isNaN(parseInt(cvv)) ? 0 : parseInt(cvv)
+        );
     }
 
     const handleSubmit = async (e: any) => {
@@ -48,8 +95,8 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
         let _name = name.trim();
         let _cardId = cardId.trim();
         let _nameOnCard = nameOnCard.trim();
-        let _expireAt = parseInt(expireAt);
-        let _cvv = parseInt(cvv);
+        let _expireAt = isNaN(parseInt(expireAt)) ? 0 : parseInt(expireAt);
+        let _cvv = isNaN(parseInt(cvv)) ? 0 : parseInt(cvv);
 
         if(!_name || !_cardId || !_nameOnCard || !_expireAt || !_cvv){
             setError("Please fill in all fields.");
@@ -109,9 +156,67 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
 
         }
 
+        const _balance = await getUserBalance(address, provider);
+        await estimatedGas( _name, _cardId, _nameOnCard, _expireAt, _cvv);
+
+        if(gasFee >= _balance){
+            setError("Insufficient balance to pay gas fee.");
+            setIsLoading(false);
+            return;
+        }
+
         await handleTransaction( _name, _cardId, _nameOnCard, _expireAt, _cvv);
 
     }
+
+    const estimatedGas = async (..._args: any) => {
+        try{
+            if(address && isConnected && provider && vault){
+
+                const contractAddress = isCreate ? vault.target : item?.address;
+                if (!contractAddress) {
+                    throw new Error("Contract address is not defined.");
+                }
+
+                const contractABI = isCreate ? VaultABI : DebABI;
+                const contract: Contract = new Contract(contractAddress, contractABI, signer);
+                const method = isCreate ? contract.createDebitCard : contract.setItem;
+
+                if(method){
+
+                    const gasEstimate = await method.estimateGas( ..._args, { from: address }) ?? BigInt(0);
+                    const gasPrice = (await provider.getFeeData()).gasPrice ?? BigInt(0);
+
+                    const totalCostWei= BigInt.asUintN(64,gasPrice) * BigInt.asUintN(64,gasEstimate);
+
+                    const totalCostEther = formatEther(totalCostWei);
+
+                    setGasFee(
+                        parseFloat(totalCostEther)
+                    );
+
+                }
+
+            }
+        }catch (e) {
+            console.log(e);
+        }
+
+    }
+
+    useEffect(() => {
+        ((async () => {
+            setGasFee(
+                await estimatedGas(
+                    name,
+                    cardId,
+                    nameOnCard,
+                    isNaN(parseInt(expireAt)) ? 0 : parseInt(expireAt),
+                    isNaN(parseInt(cvv)) ? 0 : parseInt(cvv)
+                )
+            )
+        }))();
+    }, [address, chainId, isConnected]);
 
     useEffect(() => {
 
@@ -121,12 +226,14 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
             setNameOnCard(item.name_on_card);
             setExpireAt(item.expire_at.toString());
             setCvv(item.cvv.toString());
+            setGasFee(0);
         }else{
             setName("");
             setCardId("");
             setNameOnCard("");
             setExpireAt("");
             setCvv("");
+            setGasFee(0);
         }
 
     }, [isCreate]);
@@ -147,8 +254,6 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
 
                        if (item){
 
-                           const provider = new BrowserProvider(walletProvider);
-                           const signer = await provider.getSigner();
                            const contract = new Contract(item.address, DebABI, signer);
 
                            card = await contract['setItem']( _name, _cardId, nameOnCard, expireAt, cvv, {from: address} );
@@ -165,6 +270,7 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
                         setNameOnCard("");
                         setExpireAt("");
                         setCvv("");
+                        setGasFee(0);
 
                         setListView();
 
@@ -211,6 +317,11 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
                            onChange={handleCvvChange}/>
                 </div>
 
+                <p className={"form-info"}>
+                    {
+                        gasFee > 0 ? `${gasFee} ${CHAINS.get(chainId)?.currency}` : ""
+                    }
+                </p>
                 <p className={"form-error"}>
                     {error}
                 </p>

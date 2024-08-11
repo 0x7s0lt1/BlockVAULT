@@ -117,6 +117,14 @@ const DebitList : FC<Props> = ({
 
     }, []);
 
+    useEffect(() => {
+
+        (async()=> {
+            await fetchItems();
+        })();
+
+    }, [address, chainId, isConnected]);
+
     return (
         <>
             <div className={"list-wrapper"}>

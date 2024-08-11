@@ -38,8 +38,7 @@ const Debit : FC<Props> = ({ vault }) => {
         return item.name.toLowerCase().includes(value) ||
                 item.card_id.toLowerCase().includes(value) ||
                 item.name_on_card.toLowerCase().includes(value) ||
-                item.expire_at.toString().toLowerCase().includes(value) ||
-                item.cvv.toString().toLowerCase().includes(value)
+                item.address.toLowerCase().includes(value)
             ;
     }
 

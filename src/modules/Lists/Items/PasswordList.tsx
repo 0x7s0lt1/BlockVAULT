@@ -53,68 +53,77 @@ const PasswordList : FC<Props> = ({
         setItem(null);
     }
 
-    const fetchItems = async () => {
-        setListIsLoading(true);
-        setItems([]);
-        setItemsMap(<span className={"empty-label"}>No Passwords Yet</span>);
+    const fetchItems = () => {
+        (async () => {
 
-        try {
-            if (address && isConnected && vault && walletProvider){
+            setListIsLoading(true);
+            setItems([]);
+            setItemsMap(<span className={"empty-label"}>No Passwords Yet</span>);
 
-                if( CHAINS.get(chainId) !== undefined ){
+            try {
+                if (address && isConnected && vault && walletProvider) {
 
-                    const addresses = await vault['getItem']( ItemType.PASSWORD, {from: address});
+                    if (CHAINS.get(chainId) !== undefined) {
 
-                    if(addresses.length > 0){
+                        const addresses = await vault['getItem'](ItemType.PASSWORD, {from: address});
 
-                        const provider = new BrowserProvider(walletProvider);
-                        const signer = await provider.getSigner();
+                        if (addresses.length > 0) {
 
-                        const _items: PasswordType[] = [];
-                        
-                        for (const _address of addresses) {
+                            const provider = new BrowserProvider(walletProvider);
+                            const signer = await provider.getSigner();
 
-                            const contract = new Contract(_address, PswABI, signer);
-                            const card = await contract['expose']({from: address});
+                            const _items: PasswordType[] = [];
 
-                            _items.push({
-                                name: card[0],
-                                url: card[1],
-                                user_name: card[2],
-                                password: card[3],
-                                address: _address
-                            } as PasswordType );
+                            for (const _address of addresses) {
+
+                                const contract = new Contract(_address, PswABI, signer);
+                                const card = await contract['expose']({from: address});
+
+                                _items.push({
+                                    name: card[0],
+                                    url: card[1],
+                                    user_name: card[2],
+                                    password: card[3],
+                                    address: _address
+                                } as PasswordType);
+
+                            }
+
+                            setItems(_items);
+                            setItemsMap(
+                                _items.map((item: PasswordType) => <Password item={item}
+                                                                             setFormEditView={setFormEditView}
+                                                                             setItem={setItem} vault={vault}
+                                                                             key={item.address + Math.random()}
+                                                                             setIsModalVisible={setIsModalVisible}
+                                                                             setIsDeleteModalVisible={setIsDeleteModalVisible}/>)
+                            );
 
                         }
 
-                        setItems(_items);
-                        setItemsMap(
-                            _items.map( (item: PasswordType) => <Password item={item} setFormEditView={setFormEditView} setItem={setItem} vault={vault} key={item.address + Math.random()}  setIsModalVisible={setIsModalVisible} setIsDeleteModalVisible={setIsDeleteModalVisible}/> )
-                        );
+                        setListIsLoading(false);
 
                     }
 
-                    setListIsLoading(false);
-
                 }
 
+            } catch (e) {
+                console.log(e);
+                setListIsLoading(false);
             }
 
-        }catch (e) {
-            console.log(e);
-            setListIsLoading(false);
-        }
+        })();
 
     }
 
 
     useEffect(() => {
-
-        (async()=> {
-            await fetchItems();
-        })();
-
+        fetchItems();
     }, []);
+
+    useEffect(() => {
+        fetchItems();
+    }, [address, chainId, isConnected]);
 
     return (
         <>

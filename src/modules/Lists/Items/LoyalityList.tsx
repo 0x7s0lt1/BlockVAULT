@@ -117,6 +117,14 @@ const LoyalityList : FC<Props> = ({
         })();
 
     }, []);
+
+    useEffect(() => {
+
+        (async()=> {
+            await fetchItems();
+        })();
+
+    }, [address, chainId, isConnected]);
     
     return (
         <>

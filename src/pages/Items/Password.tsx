@@ -37,8 +37,7 @@ const Password : FC<Props> = ({vault}) => {
     const isItemIncludes = (item: any, value: string) => {
         return item.name.toLowerCase().includes(value) ||
             item.url.toLowerCase().includes(value) ||
-            item.user_name.toLowerCase().includes(value) ||
-            item.password.toLowerCase().includes(value);
+            item.address.toLowerCase().includes(value);
     }
 
     const onSearchChange = (e: any) => {

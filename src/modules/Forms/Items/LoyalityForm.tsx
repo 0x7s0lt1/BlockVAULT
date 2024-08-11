@@ -1,10 +1,12 @@
 
-import React, {FC, useEffect, useState} from "react";
-import { BrowserProvider, Contract } from "ethers";
+import { FC, useEffect, useState } from "react";
+import { BrowserProvider, Contract, formatEther } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
 import { ABI as LoyABI } from "@/common/contract/Items/LoyalityCardContract";
+import { ABI as VaultABI } from "@/common/contract/UserVault/Contract";
 import LoyalityCardType from "@/types/Items/LoyalityCardType";
-import { CHAINS } from "@/types/Utils";
+import { CHAINS, getUserBalance } from "@/types/Utils";
+import {ABI as DebABI} from "@/common/contract/Items/DebitCardContract";
 
 type Props = {
     isCreate: boolean,
@@ -17,16 +19,29 @@ const LoyalityForm : FC<Props> = ({isCreate, vault, setListView, item}) => {
     const { address, chainId, isConnected } = useWeb3ModalAccount();
     const { walletProvider } = useWeb3ModalProvider();
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [name, setName] = useState('');
-    const [number, setNumber] = useState('');
-    const [error, setError] = useState('');
+    let provider: BrowserProvider;
+    let signer: any;
+    (async()=>{
+        if(walletProvider){
+            provider = new BrowserProvider(walletProvider);
+            signer = await provider.getSigner();
+        }
+    })();
 
-    const handleNameChange = (e: any) => {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [name, setName] = useState<string>('');
+    const [number, setNumber] = useState<string>('');
+    const [error, setError] = useState<string>('');
+    const [gasFee, setGasFee] = useState<any>(0);
+
+    const handleNameChange = async (e: any) => {
         setName(e.target.value);
+        await estimatedGas( e.target.value, number );
+
     }
-    const handleNumberChange = (e: any) => {
+    const handleNumberChange = async (e: any) => {
         setNumber(e.target.value);
+        await estimatedGas( name, e.target.value );
     }
 
     const handleSubmit = async (e: any) => {
@@ -64,18 +79,72 @@ const LoyalityForm : FC<Props> = ({isCreate, vault, setListView, item}) => {
 
         }
 
+        const _balance = await getUserBalance(address, provider);
+        await estimatedGas( _name, _number );
+
+        if(gasFee >= _balance){
+            setError("Insufficient balance to pay gas fee.");
+            setIsLoading(false);
+            return;
+        }
+
         await handleTransaction( _name, _number );
 
     }
+
+    const estimatedGas = async (..._args: any) => {
+        try{
+            if(address && isConnected && provider && vault){
+
+                const contractAddress = isCreate ? vault.target : item?.address;
+                if (!contractAddress) {
+                    throw new Error("Contract address is not defined.");
+                }
+
+                const contractABI = isCreate ? VaultABI : LoyABI;
+                const contract: Contract = new Contract(contractAddress, contractABI, signer);
+                const method = isCreate ? contract.createLoyalityCard : contract.setItem;
+
+                if(method){
+
+                    const gasEstimate = await method.estimateGas( ..._args, { from: address }) ?? BigInt(0);
+                    const gasPrice = (await provider.getFeeData()).gasPrice ?? BigInt(0);
+
+                    const totalCostWei= BigInt.asUintN(64,gasPrice) * BigInt.asUintN(64,gasEstimate);
+
+                    const totalCostEther = formatEther(totalCostWei);
+
+                    setGasFee(
+                        parseFloat(totalCostEther)
+                    );
+
+                }
+
+            }
+        }catch (e) {
+            console.log(e);
+        }
+
+    }
+
+    useEffect(() => {
+        ((async () => {
+            setGasFee(
+                await estimatedGas(name.trim(), number.trim())
+            )
+        }))();
+    }, [address, chainId, isConnected]);
 
     useEffect(() => {
 
         if(!isCreate && item){
             setName(item.name);
             setNumber(item.number);
+            setGasFee(0);
         }else{
             setName("");
             setNumber("");
+            setGasFee(0);
         }
 
     }, [isCreate]);
@@ -95,8 +164,6 @@ const LoyalityForm : FC<Props> = ({isCreate, vault, setListView, item}) => {
 
                         if(item){
 
-                            const provider = new BrowserProvider(walletProvider);
-                            const signer = await provider.getSigner();
                             const contract = new Contract(item.address, LoyABI, signer);
 
                             card = await contract['setItem']( _name, _number, {from: address} );
@@ -111,6 +178,8 @@ const LoyalityForm : FC<Props> = ({isCreate, vault, setListView, item}) => {
                         setName("");
                         setNumber("");
                         setError("");
+                        setGasFee(0);
+
                         setListView();
 
                     });
@@ -141,6 +210,11 @@ const LoyalityForm : FC<Props> = ({isCreate, vault, setListView, item}) => {
                            onChange={handleNumberChange}/>
                 </div>
 
+                <p className={"form-info"}>
+                    {
+                        gasFee > 0 ? `${gasFee} ${CHAINS.get(chainId)?.currency}` : ""
+                    }
+                </p>
                 <p className={"form-error"}>
                     {error}
                 </p>

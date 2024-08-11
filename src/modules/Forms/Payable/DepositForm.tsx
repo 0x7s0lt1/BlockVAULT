@@ -1,8 +1,8 @@
 
 import { FC, useState, useEffect } from "react";
-import { BrowserProvider, Contract, parseEther, formatEther } from "ethers";
+import {BrowserProvider, Contract, parseEther, formatEther, Signer} from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
-import { CHAINS } from "@/types/Utils";
+import {CHAINS, getUserBalance} from "@/types/Utils";
 
 type Props = {
     fetchBalance: Function
@@ -12,6 +12,15 @@ const DepositForm : FC<Props> = ({ fetchBalance, vault }) => {
 
     const { address, chainId, isConnected } = useWeb3ModalAccount();
     const { walletProvider } = useWeb3ModalProvider();
+
+    let provider : BrowserProvider;
+    let signer : Signer;
+    (async()=>{
+        if(walletProvider){
+            provider = new BrowserProvider(walletProvider);
+            signer = await provider.getSigner();
+        }
+    })();
 
     const [isLoading, setIsLoading] = useState(false);
     const [amount, setAmount] = useState<string>("");
@@ -65,9 +74,9 @@ const DepositForm : FC<Props> = ({ fetchBalance, vault }) => {
 
             if(walletProvider){
 
-                const provider = new BrowserProvider(walletProvider);
-                const balance = await provider.getBalance(address);
-                setUserBalance(Number(formatEther(balance)));
+                const balance = await getUserBalance(address, provider);
+
+                setUserBalance(balance);
 
             }
 

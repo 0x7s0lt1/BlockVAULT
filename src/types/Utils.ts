@@ -1,4 +1,4 @@
-import { Signer, verifyMessage } from "ethers";
+import { Signer, verifyMessage, formatEther } from "ethers";
 import ChainMetaType from "@/types/ChainMetaType";
 
 export const DEFAULT_ADDRESS = "0x0000000000000000000000000000000000000000";
@@ -24,6 +24,13 @@ export const CHAINS: Map<number, ChainMetaType> = new Map<number, ChainMetaType>
         currency: "SepoliaETH",
         explorerUrl: "https://sepolia.etherscan.io",
         rpcUrl: "https://rpc.sepolia.org"
+    }],
+    [56, {
+        chainId: 56,
+        name: "Binance",
+        currency: "BNB",
+        explorerUrl: "https://bscscan.com",
+        rpcUrl: "https://bsc-dataseed.binance.org/"
     }],
     [8453, {
         chainId: 8453,
@@ -83,4 +90,16 @@ export const hasValidSignature = async (address: string, signer: Signer) => {
 
     })
 
+}
+
+export const getUserBalance = async (address: string, provider: any) => {
+    return new Promise<any>(async (resolve,reject)=>{
+        try{
+            const balance = await provider.getBalance(address);
+            resolve( Number( formatEther(balance) ) );
+        }catch (e){
+            console.log(e);
+            reject(e);
+        }
+    })
 }

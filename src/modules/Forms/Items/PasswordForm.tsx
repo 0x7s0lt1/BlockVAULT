@@ -1,10 +1,12 @@
 
 import { FC, useEffect, useState } from "react";
-import { BrowserProvider, Contract } from "ethers";
+import { BrowserProvider, Contract, formatEther, Signer } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
 import { ABI as PswABI } from "@/common/contract/Items/PasswordContract";
-import { CHAINS } from "@/types/Utils";
+import { ABI as VaultABI } from "@/common/contract/UserVault/Contract";
+import { CHAINS, getUserBalance } from "@/types/Utils";
 import PasswordType from "@/types/Items/PasswordType";
+import {ABI as DebABI} from "@/common/contract/Items/DebitCardContract";
 
 type Props = {
     isCreate: boolean,
@@ -17,25 +19,39 @@ const PasswordForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
     const { address, chainId, isConnected } = useWeb3ModalAccount();
     const { walletProvider } = useWeb3ModalProvider();
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [name, setName] = useState('');
-    const [url, setUrl] = useState('');
-    const [userName, setUserName] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    let provider : BrowserProvider;
+    let signer : Signer;
+    (async()=>{
+        if(walletProvider){
+            provider = new BrowserProvider(walletProvider);
+            signer = await provider.getSigner();
+        }
+    })();
+
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [name, setName] = useState<string>('');
+    const [url, setUrl] = useState<string>('');
+    const [userName, setUserName] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [error, setError] = useState<string|null>('');
+    const [gasFee, setGasFee] = useState<any>(0);
 
 
-   const handleNameChange = (e: any) => {
+   const handleNameChange = async (e: any) => {
         setName(e.target.value);
+        await estimatedGas( e.target.value, url, userName, password );
    }
-    const handleUrlChange = (e: any) => {
+    const handleUrlChange = async (e: any) => {
         setUrl(e.target.value);
+        await estimatedGas( name, e.target.value, userName, password );
     }
-    const handleUserNameChange = (e: any) => {
+    const handleUserNameChange = async (e: any) => {
         setUserName(e.target.value);
+        await estimatedGas( name, url, e.target.value, password );
     }
-    const handlePasswordChange = (e: any) => {
+    const handlePasswordChange = async (e: any) => {
         setPassword(e.target.value);
+        await estimatedGas( name, url, userName, e.target.value );
     }
 
     const handleSubmit = async (e: any) => {
@@ -87,7 +103,51 @@ const PasswordForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
 
         }
 
+        const _balance = await getUserBalance(address, provider);
+        await estimatedGas( _name, _url, _userName, _password);
+
+        if(gasFee >= _balance){
+            setError("Insufficient balance to pay gas fee.");
+            setIsLoading(false);
+            return;
+        }
+
         await handleTransaction( _name, _url, _userName, _password );
+
+    }
+
+    const estimatedGas = async (..._args: any) => {
+        try{
+            if(address && isConnected && provider && vault){
+
+                const contractAddress = isCreate ? vault.target : item?.address;
+                if (!contractAddress) {
+                    throw new Error("Contract address is not defined.");
+                }
+
+                const contractABI = isCreate ? VaultABI : PswABI;
+                const contract: Contract = new Contract(contractAddress, contractABI, signer);
+                const method = isCreate ? contract.createPassword : contract.setItem;
+
+                if(method){
+
+                    const gasEstimate = await method.estimateGas( ..._args, { from: address }) ?? BigInt(0);
+                    const gasPrice = (await provider.getFeeData()).gasPrice ?? BigInt(0);
+
+                    const totalCostWei= BigInt.asUintN(64,gasPrice) * BigInt.asUintN(64,gasEstimate);
+
+                    const totalCostEther = formatEther(totalCostWei);
+
+                    setGasFee(
+                        parseFloat(totalCostEther)
+                    );
+
+                }
+
+            }
+        }catch (e) {
+            console.log(e);
+        }
 
     }
 
@@ -98,11 +158,13 @@ const PasswordForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
             setUrl(item.url);
             setUserName(item.user_name);
             setPassword(item.password);
+            setGasFee(0);
         }else{
             setName("");
             setUrl("");
             setUserName("");
             setPassword("");
+            setGasFee(0);
         }
 
     }, [isCreate]);
@@ -122,8 +184,6 @@ const PasswordForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
 
                        if(item){
 
-                           const provider = new BrowserProvider(walletProvider);
-                           const signer = await provider.getSigner();
                            const contract = new Contract(item.address, PswABI, signer);
 
                            card = await contract['setItem']( _name, _url, _userName, _password, {from: address} );
@@ -139,6 +199,8 @@ const PasswordForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
                         setUrl("");
                         setUserName("");
                         setPassword("");
+                        setGasFee(0);
+
                         setListView();
 
                     });
@@ -179,6 +241,11 @@ const PasswordForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
                            onChange={handlePasswordChange}/>
                 </div>
 
+                <p className={"form-info"}>
+                    {
+                        gasFee > 0 ? `${gasFee} ${CHAINS.get(chainId)?.currency}` : ""
+                    }
+                </p>
                 <p className={"form-error"}>
                     {error}
                 </p>
