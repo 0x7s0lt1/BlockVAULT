@@ -1,9 +1,9 @@
 
-import React, {FC, useEffect, useState} from "react";
+import { FC, useEffect, useState } from "react";
 import { BrowserProvider, Contract } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
 import { ABI as PswABI } from "@/common/contract/Items/PasswordContract";
-import {ItemType} from "@/types/ItemType";
+import { ItemType } from "@/types/ItemType";
 import Password from "@/modules/Items/Password";
 import PasswordType from "@/types/Items/PasswordType";
 import Modal from "@/modules/Modal/Modal";
@@ -21,7 +21,7 @@ type Props = {
     isSearch: boolean,
     searchResults: Array<typeof Password>,
     setFormEditView: Function,
-    item: LoyalityCardType|null,
+    item: PasswordType|null,
     setItem: Function,
     isModalVisible: boolean,
     setIsModalVisible: Function,
@@ -70,7 +70,7 @@ const PasswordList : FC<Props> = ({
                         const provider = new BrowserProvider(walletProvider);
                         const signer = await provider.getSigner();
 
-                        const _items: PasswordType = [];
+                        const _items: PasswordType[] = [];
                         
                         for (const _address of addresses) {
 

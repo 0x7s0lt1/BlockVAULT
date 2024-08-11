@@ -10,7 +10,7 @@ type Props = {
     isCreate: boolean,
     vault: Contract | null,
     setListView: Function,
-    item?: DebitCardType|null
+    item: DebitCardType|null
 }
 const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
 
@@ -48,8 +48,8 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
         let _name = name.trim();
         let _cardId = cardId.trim();
         let _nameOnCard = nameOnCard.trim();
-        let _expireAt = BigInt(expireAt);
-        let _cvv = BigInt(cvv);
+        let _expireAt = parseInt(expireAt);
+        let _cvv = parseInt(cvv);
 
         if(!_name || !_cardId || !_nameOnCard || !_expireAt || !_cvv){
             setError("Please fill in all fields.");
@@ -101,7 +101,7 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
 
         if(!isCreate && item){
 
-            if( _name == item.name && _cardId == item.card_id && _nameOnCard == item.name_on_card && _expireAt == item.expire_at && _cvv == item.cvv ){
+            if( _name == item.name && _cardId == item.card_id && _nameOnCard == item.name_on_card && _expireAt == Number(item.expire_at) && _cvv == Number(item.cvv) ){
                 setError("No changes were made.");
                 setIsLoading(false);
                 return;
@@ -114,7 +114,6 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
     }
 
     useEffect(() => {
-        console.log(item);
 
         if(!isCreate && item){
             setName(item.name);
@@ -132,10 +131,11 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
 
     }, [isCreate]);
 
-    const handleTransaction = async ( _name: string, _cardId: string, nameOnCard: string, expireAt: BigInt, cvv: BigInt) => {
+    const handleTransaction = async ( _name: string, _cardId: string, nameOnCard: string, expireAt: number, cvv: number) => {
 
         try{
-            if(address && isConnected && vault && item && walletProvider){
+
+            if(address && isConnected && vault &&  walletProvider){
 
                 if( CHAINS.get(chainId) !== undefined ){
 
@@ -145,11 +145,15 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
                         card = await vault['createDebitCard']( _name, _cardId, nameOnCard, expireAt, cvv, {from: address} );
                     }else{
 
-                        const provider = new BrowserProvider(walletProvider);
-                        const signer = await provider.getSigner();
-                        const contract = new Contract(item.address, DebABI, signer);
+                       if (item){
 
-                        card = await contract['setItem']( _name, _cardId, nameOnCard, expireAt, cvv, {from: address} );
+                           const provider = new BrowserProvider(walletProvider);
+                           const signer = await provider.getSigner();
+                           const contract = new Contract(item.address, DebABI, signer);
+
+                           card = await contract['setItem']( _name, _cardId, nameOnCard, expireAt, cvv, {from: address} );
+
+                       }
 
                     }
 

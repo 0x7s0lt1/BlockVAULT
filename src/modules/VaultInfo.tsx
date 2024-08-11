@@ -3,6 +3,7 @@ import { FC } from "react";
 import { Contract } from "ethers";
 import { useWeb3ModalAccount } from '@web3modal/ethers/react';
 import { Link } from "react-router-dom";
+import { CHAINS } from "@/types/Utils";
 
 type Props = {
     ticker: string|undefined
@@ -24,8 +25,8 @@ const VaultInfo : FC<Props> = ({ ticker, balance, vault }) => {
                     </h1>
                 </span>
                 <span className="vlt-text">
-                    <a target={"_blank"} className="value link-purple" href={`https://polygonscan.com/address/${vault.target}`}>
-                        {vault.target}
+                    <a target={"_blank"} className="value link-purple" href={`${CHAINS.get(chainId)?.explorerUrl ?? ""}/address/${vault?.target}`}>
+                        {`${vault?.target}`}
                     </a>
                 </span>
 

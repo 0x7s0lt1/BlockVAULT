@@ -28,14 +28,14 @@ const Index : FC = () => {
 
     const [vault, setVault] = useState<Contract|null>(null);
     const [ticker, setTicker] = useState<string>("UNKNOWN");
-    const [balance, setBalance] = useState<BigInt>(0);
+    const [balance, setBalance] = useState<number>(0);
 
     const fetchBalance = async () => {
         if(vault && isConnected){
            try{
                const _balance = await vault['getBalance']({from: address});
-               setBalance( formatUnits(_balance, 'ether') );
-               setTicker( CHAINS.get(chainId)?.currency );
+               setBalance( parseFloat(formatUnits(_balance, 'ether')) );
+               setTicker( CHAINS.get(chainId)?.currency ?? "UNKNOWN" );
            }catch (e){
                console.log(e);
            }
@@ -44,11 +44,11 @@ const Index : FC = () => {
 
     const fetchVault = async () => {
 
-        if( CHAINS.get(chainId) != undefined ){
+        if( CHAINS.get(chainId) != undefined && walletProvider ){
 
             const provider = new BrowserProvider(walletProvider);
             const signer = await provider.getSigner();
-            const contract = new Contract( chainIdAddressMap.get(chainId), ManagerABI, signer );
+            const contract = new Contract( chainIdAddressMap.get(chainId) ?? "", ManagerABI, signer );
 
             const vaultAddr = await contract['getVaultByOwner']({from: address});
 
@@ -60,7 +60,7 @@ const Index : FC = () => {
             }
 
         }else{
-            await switchNetwork(CHAINS.get(137)?.chainId);
+            await switchNetwork(137);
         }
 
     }
@@ -71,7 +71,6 @@ const Index : FC = () => {
 
             if(address && isConnected){
                 await fetchVault();
-                //TODO: force polyon mainnet ?
             }
 
         })();
@@ -126,12 +125,15 @@ const Index : FC = () => {
                         </div>
                         <div className={"board slot-hover"}>
                             <Routes>
+
+                                <Route index path="/" element={<Password vault={vault}/>} ></Route>
+
                                 <Route  path="/deposit" element={<Deposit fetchBalance={fetchBalance} vault={vault}/>} ></Route>
                                 <Route  path="/withdraw" element={<Withdraw balance={balance} fetchBalance={fetchBalance} vault={vault}/>} ></Route>
 
-                                <Route index path="/loyality/:slug" element={<Loyality vault={vault}/>} ></Route>
-                                <Route path="/debit/:slug" element={<Debit vault={vault}/>} ></Route>
-                                <Route path="/password/:slug" element={<Password vault={vault}/>} ></Route>
+                                <Route path="/loyality" element={<Loyality vault={vault}/>} ></Route>
+                                <Route path="/debit" element={<Debit vault={vault}/>} ></Route>
+                                <Route path="/password" element={<Password vault={vault}/>} ></Route>
                             </Routes>
                         </div>
                     </>

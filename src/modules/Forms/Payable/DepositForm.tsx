@@ -15,9 +15,8 @@ const DepositForm : FC<Props> = ({ fetchBalance, vault }) => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [amount, setAmount] = useState<string>("");
-    const [userBalance, setUserBalance] = useState<BigInt>();
+    const [userBalance, setUserBalance] = useState<number>();
     const [error, setError] = useState<string>();
-
 
 
     const handleAmountChange = (e: any) => {
@@ -42,8 +41,23 @@ const DepositForm : FC<Props> = ({ fetchBalance, vault }) => {
             return;
         }
 
+        if(userBalance && userBalance < _amount){
+            setError(
+                userBalance <= 0 ? "No balance to deposit." :
+                    `Maximum amount available to deposit is ${userBalance} ${CHAINS.get(chainId)?.currency}.`
+            );
+            setIsLoading(false);
+            return;
+        }
+
         await handleTransaction( _amount );
 
+    }
+
+    const handleBalanceClick = async () => {
+        if(userBalance){
+            setAmount((userBalance - 0.00000001 > 0 ? userBalance - 0.00000001 : 0).toString());
+        }
     }
     
     useEffect(() => {
@@ -53,7 +67,7 @@ const DepositForm : FC<Props> = ({ fetchBalance, vault }) => {
 
                 const provider = new BrowserProvider(walletProvider);
                 const balance = await provider.getBalance(address);
-                setUserBalance(BigInt(formatEther(balance)));
+                setUserBalance(Number(formatEther(balance)));
 
             }
 
@@ -102,7 +116,7 @@ const DepositForm : FC<Props> = ({ fetchBalance, vault }) => {
                     <h5 className={"form-label"}>{`Amount (${CHAINS.get(chainId)?.currency})`}</h5>
                     <input className={"form-input"} type={"text"} name={"amount"} value={amount}
                            onChange={handleAmountChange}/>
-                    <p className={"mt-2 mx-2"}>{`Balance: ${userBalance}`}</p>
+                    <p className={"mt-2 mx-2"} onClick={handleBalanceClick}>{`Balance: ${userBalance}`}</p>
                     <p className={"form-error"}>
                         {error}
                     </p>

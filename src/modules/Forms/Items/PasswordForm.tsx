@@ -1,5 +1,5 @@
 
-import React, {FC, useEffect, useState} from "react";
+import { FC, useEffect, useState } from "react";
 import { BrowserProvider, Contract } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
 import { ABI as PswABI } from "@/common/contract/Items/PasswordContract";
@@ -12,7 +12,7 @@ type Props = {
     setListView: Function,
     item?: PasswordType|null
 }
-const PasswordForm : FC<Props> = ({isCreate, vault, setListView, item}) => {
+const PasswordForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
 
     const { address, chainId, isConnected } = useWeb3ModalAccount();
     const { walletProvider } = useWeb3ModalProvider();
@@ -110,7 +110,7 @@ const PasswordForm : FC<Props> = ({isCreate, vault, setListView, item}) => {
     const handleTransaction = async ( _name: string, _url: string, _userName: string, _password: string ) => {
 
         try{
-            if(address && isConnected && vault && item && walletProvider){
+            if(address && isConnected && vault && walletProvider){
 
                 if( CHAINS.get(chainId) !== undefined ){
 
@@ -120,11 +120,15 @@ const PasswordForm : FC<Props> = ({isCreate, vault, setListView, item}) => {
                         card = await vault['createPassword']( _name, _url, _userName, _password, {from: address} );
                     }else{
 
-                        const provider = new BrowserProvider(walletProvider);
-                        const signer = await provider.getSigner();
-                        const contract = new Contract(item.address, PswABI, signer);
+                       if(item){
 
-                        card = await contract['setItem']( _name, _url, _userName, _password, {from: address} );
+                           const provider = new BrowserProvider(walletProvider);
+                           const signer = await provider.getSigner();
+                           const contract = new Contract(item.address, PswABI, signer);
+
+                           card = await contract['setItem']( _name, _url, _userName, _password, {from: address} );
+                           
+                       }
 
                     }
 

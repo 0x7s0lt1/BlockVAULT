@@ -5,6 +5,7 @@ import LoyalityList from "@/modules/Lists/Items/LoyalityList";
 import LoyalityForm from "@/modules/Forms/Items/LoyalityForm";
 import LoyalityCardType from "@/types/Items/LoyalityCardType";
 import LoyalityCard from "@/modules/Items/LoyalityCard";
+import { Contract } from "ethers";
 
 type Props = {
     vault: Contract | null
@@ -13,10 +14,10 @@ const Loyality : FC<Props> = ({vault}) => {
 
     const [isCreate, setIsCreate] = useState(false);
     const [item, setItem] = useState<LoyalityCardType|null>(null);
-    const [items, setItems] = useState<LoyalityCardType[]>([]);
+    const [items, setItems] = useState<LoyalityCardType[]|any>([]);
     const [isListView, setIsListView] = useState(true);
     const [isSearch, setIsSearch] = useState(false);
-    const [searchResults, setSearchResults] = useState<LoyalityCardType[]>([]);
+    const [searchResults, setSearchResults] = useState<typeof LoyalityCard[]>([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
@@ -33,6 +34,12 @@ const Loyality : FC<Props> = ({vault}) => {
         setIsListView(true);
     }
 
+    const isItemIncludes = (item: any, value: string) => {
+        return item.name.toLowerCase().includes(value) ||
+            item.number.toLowerCase().includes(value)
+            ;
+    }
+
     const onSearchChange = (e: any) => {
         const _value = e.target.value.trim().toLowerCase();
 
@@ -42,8 +49,8 @@ const Loyality : FC<Props> = ({vault}) => {
         }
 
         setSearchResults(
-            items.filter( (item: LoyalityCardType) => item.name.toLowerCase().includes(_value) || item.number.toLowerCase().includes(_value) )
-                .map( (item: LoyalityCardType) => <LoyalityCard item={item} setItem={setItem} setIsModalVisible={setIsModalVisible} setIsDeleteModalVisible={setIsDeleteModalVisible} vault={vault} key={item.address + Math.random()}  setFormEditView={setFormEditView}/>  )
+            items.filter( (item: typeof LoyalityCard) => isItemIncludes( item, _value ) )
+                .map( (item: any) => <LoyalityCard item={item} setItem={setItem} setIsModalVisible={setIsModalVisible} setIsDeleteModalVisible={setIsDeleteModalVisible} vault={vault} key={item.address + Math.random()}  setFormEditView={setFormEditView}/>  )
         )
 
         setIsSearch(true);

@@ -5,6 +5,7 @@ import DebitList from "@/modules/Lists/Items/DebitList";
 import DebitForm from "@/modules/Forms/Items/DebitForm";
 import DebitCardType from "@/types/Items/DebitCardType";
 import DebitCard from "@/modules/Items/DebitCard";
+import { Contract } from "ethers";
 
 type Props = {
     vault: Contract | null
@@ -13,10 +14,10 @@ const Debit : FC<Props> = ({ vault }) => {
 
     const [isCreate, setIsCreate] = useState(false);
     const [item, setItem] = useState<DebitCardType|null>(null);
-    const [items, setItems] = useState<DebitCardType[]>([]);
+    const [items, setItems] = useState<DebitCardType[]|any>([]);
     const [isListView, setIsListView] = useState(true);
     const [isSearch, setIsSearch] = useState(false);
-    const [searchResults, setSearchResults] = useState<DebitCardType[]>([]);
+    const [searchResults, setSearchResults] = useState<typeof DebitCard[]>([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
@@ -33,12 +34,13 @@ const Debit : FC<Props> = ({ vault }) => {
         setIsListView(true);
     }
 
-    const isItemIncludes = (item: DebitCardType, value: string) => {
+    const isItemIncludes = (item: any, value: string) => {
         return item.name.toLowerCase().includes(value) ||
                 item.card_id.toLowerCase().includes(value) ||
                 item.name_on_card.toLowerCase().includes(value) ||
-                item.expire_at.toLowerCase().includes(value) ||
-                item.cvv.toLowerCase().includes(value);
+                item.expire_at.toString().toLowerCase().includes(value) ||
+                item.cvv.toString().toLowerCase().includes(value)
+            ;
     }
 
     const onSearchChange = (e: any) => {
@@ -51,8 +53,8 @@ const Debit : FC<Props> = ({ vault }) => {
         }
 
         setSearchResults(
-            items.filter( (item: DebitCardType) => isItemIncludes( item, _value ) )
-                .map( (item: DebitCardType) => <DebitCard item={item} setItem={setItem} setIsModalVisible={setIsModalVisible} setIsDeleteModalVisible={setIsDeleteModalVisible} vault={vault} key={item.address + Math.random()}  setFormEditView={setFormEditView}/>  )
+            items.filter( (item: typeof DebitCard) => isItemIncludes( item, _value ) )
+                .map( (item: any) => <DebitCard item={item} setItem={setItem} setIsModalVisible={setIsModalVisible} setIsDeleteModalVisible={setIsDeleteModalVisible} vault={vault} key={item.address + Math.random()}  setFormEditView={setFormEditView}/>  )
         )
 
         setIsSearch(true);
@@ -82,7 +84,7 @@ const Debit : FC<Props> = ({ vault }) => {
                         <DebitList
                             setItems={setItems}
                             isSearch={isSearch}
-                            searchResults={searchResults}
+                            searchResults={searchResults as typeof DebitCard[]}
                             setFormEditView={setFormEditView}
                             item={item}
                             setItem={setItem}

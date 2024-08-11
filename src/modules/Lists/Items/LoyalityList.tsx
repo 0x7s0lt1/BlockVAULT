@@ -49,6 +49,8 @@ const LoyalityList : FC<Props> = ({
     const [listIsLoading, setListIsLoading] = useState(true);
     const [itemsMap, setItemsMap] = useState<any>();
 
+    const [isBarcodeView, setIsBarcodeView] = useState(true);
+
     const onModalClose = () => {
         setItem(null);
     }
@@ -140,8 +142,8 @@ const LoyalityList : FC<Props> = ({
                 visible={isModalVisible}
                 setVisible={setIsModalVisible}
                 header={<Header item={item} />}
-                body={<Body item={item} />}
-                footer={<Footer item={item} />}
+                body={<Body isBarcodeView={isBarcodeView} item={item} />}
+                footer={<Footer isBarcodeView={isBarcodeView} setIsBarcodeView={setIsBarcodeView} item={item} />}
                 onClose={onModalClose}
             />
 

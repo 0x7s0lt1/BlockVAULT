@@ -1,7 +1,8 @@
 import { FC, useState } from "react";
 import LoyalityCardType from "@/types/Items/LoyalityCardType";
 import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
-import {ItemType} from "@/types/ItemType";
+import { ItemType } from "@/types/ItemType";
+import { Contract } from "ethers";
 
 
 type Props = {

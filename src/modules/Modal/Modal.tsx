@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState, useRef} from "react";
+import { FC, useEffect, useRef } from "react";
 import { X } from 'react-bootstrap-icons';
 
 type Props = {
@@ -22,18 +22,20 @@ const Modal : FC<Props> = ({
                                onConfirm
                            }) => {
 
-    const ref = useRef();
+    const ref = useRef<HTMLDialogElement>(null);
     const close = () => {
         if(typeof onClose == "function") onClose();
         setVisible(false);
     }
 
     useEffect(() => {
+
         if(visible) {
             ref.current?.showModal();
         }else {
             ref.current?.close();
         }
+
     }, [visible]);
 
     return (

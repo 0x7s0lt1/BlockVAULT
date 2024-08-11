@@ -4,6 +4,7 @@ import { Contract } from "ethers";
 import WithdrawForm from "@/modules/Forms/Payable/WithdrawForm";
 
 type Props = {
+    balance: number,
     fetchBalance: Function,
     vault: Contract | null
 }

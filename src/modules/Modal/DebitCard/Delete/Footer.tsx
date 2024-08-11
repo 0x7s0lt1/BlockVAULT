@@ -1,7 +1,8 @@
 import { FC, useState } from "react";
 import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
-import {ItemType} from "@/types/ItemType";
+import { ItemType } from "@/types/ItemType";
 import DebitCardType from "@/types/Items/DebitCardType";
+import { Contract } from "ethers";
 
 
 type Props = {

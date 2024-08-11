@@ -2,6 +2,7 @@ import { FC, useState } from "react";
 import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
 import { ItemType } from "@/types/ItemType";
 import PasswordType from "@/types/Items/PasswordType";
+import { Contract } from "ethers";
 
 
 type Props = {

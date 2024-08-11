@@ -15,7 +15,7 @@ type Props = {
 const Meta : FC<Props> = ({
                             title = "BlockVault",
                             description = "OnChain password manager",
-                            favIcon = "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏹️</text></svg>",
+                            favIcon = "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔒</text></svg>",
                             themeColor = "#ff4a9a",
                             ogUrl = "OnChain password manager",
                             ogType = "website",

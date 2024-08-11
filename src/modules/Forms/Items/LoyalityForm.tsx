@@ -83,7 +83,7 @@ const LoyalityForm : FC<Props> = ({isCreate, vault, setListView, item}) => {
     const handleTransaction = async ( _name: string, _number: string ) => {
 
         try{
-            if(address && isConnected && vault && item && walletProvider){
+            if(address && isConnected && vault && walletProvider){
 
                 if( CHAINS.get(chainId) !== undefined ){
 
@@ -93,11 +93,15 @@ const LoyalityForm : FC<Props> = ({isCreate, vault, setListView, item}) => {
                         card = await vault['createLoyalityCard']( _name, _number, {from: address} );
                     }else{
 
-                        const provider = new BrowserProvider(walletProvider);
-                        const signer = await provider.getSigner();
-                        const contract = new Contract(item.address, LoyABI, signer);
+                        if(item){
 
-                        card = await contract['setItem']( _name, _number, {from: address} );
+                            const provider = new BrowserProvider(walletProvider);
+                            const signer = await provider.getSigner();
+                            const contract = new Contract(item.address, LoyABI, signer);
+
+                            card = await contract['setItem']( _name, _number, {from: address} );
+
+                        }
 
                     }
 

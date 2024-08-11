@@ -5,20 +5,21 @@ import PasswordList from "@/modules/Lists/Items/PasswordList";
 import PasswordForm from "@/modules/Forms/Items/PasswordForm";
 import PasswordType from "@/types/Items/PasswordType";
 import PasswordItem from "@/modules/Items/Password";
+import { Contract } from "ethers";
 
 type Props = {
     vault: Contract | null
 }
 const Password : FC<Props> = ({vault}) => {
 
-    const [isCreate, setIsCreate] = useState(false);
+    const [isCreate, setIsCreate] = useState<boolean>(false);
     const [item, setItem] = useState<PasswordType|null>(null);
-    const [items, setItems] = useState<PasswordType[]>([]);
-    const [isListView, setIsListView] = useState(true);
-    const [isSearch, setIsSearch] = useState(false);
-    const [searchResults, setSearchResults] = useState<PasswordType[]>([]);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+    const [items, setItems] = useState<PasswordType[]|any>([]);
+    const [isListView, setIsListView] = useState<boolean>(true);
+    const [isSearch, setIsSearch] = useState<boolean>(false);
+    const [searchResults, setSearchResults] = useState<typeof PasswordItem[]>([]);
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState<boolean>(false);
 
     const setFormView = ()=>{
         setIsCreate(true);
@@ -33,7 +34,7 @@ const Password : FC<Props> = ({vault}) => {
         setIsListView(true);
     }
 
-    const isItemIncludes = (item: PasswordType, value: string) => {
+    const isItemIncludes = (item: any, value: string) => {
         return item.name.toLowerCase().includes(value) ||
             item.url.toLowerCase().includes(value) ||
             item.user_name.toLowerCase().includes(value) ||
@@ -50,8 +51,8 @@ const Password : FC<Props> = ({vault}) => {
         }
 
         setSearchResults(
-            items.filter( (item: PasswordType) => isItemIncludes( item, _value ) )
-                .map( (item: PasswordType) => <PasswordItem item={item} setItem={setItem} setIsModalVisible={setIsModalVisible} setIsDeleteModalVisible={setIsDeleteModalVisible} vault={vault} key={item.address + Math.random()}  setFormEditView={setFormEditView}/>  )
+            items.filter( (item: typeof PasswordItem) => isItemIncludes( item, _value ) )
+                .map( (item: any) => <PasswordItem item={item} setItem={setItem} setIsModalVisible={setIsModalVisible} setIsDeleteModalVisible={setIsDeleteModalVisible} vault={vault} key={item.address + Math.random()}  setFormEditView={setFormEditView}/>  )
         )
 
         setIsSearch(true);

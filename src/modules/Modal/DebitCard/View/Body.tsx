@@ -9,9 +9,6 @@ const Body : FC<Props> = ({ item }) => {
     return (
         <>
             <div className={"deb-card"}>
-                <h1 className={"text-barcode text-white"}>
-                    {item ? item.number : ""}
-                </h1>
                 <p className={"text-white deb-card-number"}>
                     {item ? item.card_id : ""}
                 </p>

@@ -5,7 +5,7 @@ import { useWeb3ModalAccount } from '@web3modal/ethers/react';
 import { CHAINS } from "@/types/Utils";
 
 type Props = {
-    balance: BigInt,
+    balance: number,
     fetchBalance: Function,
     vault: Contract | null
 }
@@ -41,10 +41,10 @@ const WithdrawForm : FC<Props> = ({ balance, fetchBalance, vault }) => {
             return;
         }
 
-        if(Number(balance) < _amount){
+        if(balance < _amount){
 
             setError(
-                Number(balance) <= 0 ? "No balance to withdraw." :
+                balance <= 0 ? "No balance to withdraw." :
                 `Maximum amount available to withdraw is ${balance} ${CHAINS.get(chainId)?.currency}.`
             );
             setIsLoading(false);
@@ -53,6 +53,10 @@ const WithdrawForm : FC<Props> = ({ balance, fetchBalance, vault }) => {
 
         await handleTransaction( _amount );
 
+    }
+
+    const handleBalanceClick = async () => {
+        setAmount(balance.toString());
     }
 
 
@@ -97,7 +101,7 @@ const WithdrawForm : FC<Props> = ({ balance, fetchBalance, vault }) => {
                     <h5 className={"form-label"}>{`Amount (${CHAINS.get(chainId)?.currency})`}</h5>
                     <input className={"form-input"} type={"text"} name={"amount"} value={amount}
                            onChange={handleAmountChange}/>
-                    <p className={"mt-2 mx-2"}>{`Contract Balance: ${balance}`}</p>
+                    <p className={"mt-2 mx-2"} onClick={handleBalanceClick}>{`Contract Balance: ${balance}`}</p>
                     <p className={"form-error"}>
                         {error}
                     </p>

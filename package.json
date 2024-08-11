@@ -19,6 +19,7 @@
     "react-bootstrap": "^2.10.4",
     "react-bootstrap-icons": "^1.11.4",
     "react-dom": "latest",
+    "react-qr-code": "^2.0.15",
     "react-router-dom": "^6.26.0"
   },
   "devDependencies": {
