@@ -92,7 +92,7 @@ dialog{
     align-items: center;
 }
 .loy-card-number{
-    letter-spacing: 0.5rem;
+    font-size:  1.3rem;
     text-align: center;
 
 }
