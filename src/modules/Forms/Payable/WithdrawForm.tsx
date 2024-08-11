@@ -14,7 +14,7 @@ const WithdrawForm : FC<Props> = ({ balance, fetchBalance, vault }) => {
     const { address, chainId, isConnected } = useWeb3ModalAccount();
 
     const [isLoading, setIsLoading] = useState(false);
-    const [amount, setAmount] = useState<number|"">("");
+    const [amount, setAmount] = useState<string>("");
     const [error, setError] = useState<string>();
 
 
@@ -41,10 +41,10 @@ const WithdrawForm : FC<Props> = ({ balance, fetchBalance, vault }) => {
             return;
         }
 
-        if(balance < _amount){
+        if(Number(balance) < _amount){
 
             setError(
-                balance <= 0 ? "No balance to withdraw." :
+                Number(balance) <= 0 ? "No balance to withdraw." :
                 `Maximum amount available to withdraw is ${balance} ${CHAINS.get(chainId)?.currency}.`
             );
             setIsLoading(false);
@@ -56,10 +56,10 @@ const WithdrawForm : FC<Props> = ({ balance, fetchBalance, vault }) => {
     }
 
 
-    const handleTransaction = async ( _amount: number ) => {
+    const handleTransaction = async ( _amount: number|BigInt ) => {
 
         try{
-            if(address && isConnected){
+            if(address && isConnected && vault){
 
                 if(CHAINS.get(chainId) !== undefined){
 

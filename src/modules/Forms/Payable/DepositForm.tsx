@@ -14,8 +14,8 @@ const DepositForm : FC<Props> = ({ fetchBalance, vault }) => {
     const { walletProvider } = useWeb3ModalProvider();
 
     const [isLoading, setIsLoading] = useState(false);
-    const [amount, setAmount] = useState<number|"">("");
-    const [userBalance, setUserBalance] = useState<BigInt>(0);
+    const [amount, setAmount] = useState<string>("");
+    const [userBalance, setUserBalance] = useState<BigInt>();
     const [error, setError] = useState<string>();
 
 
@@ -49,18 +49,22 @@ const DepositForm : FC<Props> = ({ fetchBalance, vault }) => {
     useEffect(() => {
         (async()=>{
 
-            const provider = new BrowserProvider(walletProvider);
-            const balance = await provider.getBalance(address);
-            setUserBalance(formatEther(balance));
+            if(walletProvider){
+
+                const provider = new BrowserProvider(walletProvider);
+                const balance = await provider.getBalance(address);
+                setUserBalance(BigInt(formatEther(balance)));
+
+            }
 
         })();
     }, [chainId]);
 
 
-    const handleTransaction = async ( _amount: number ) => {
+    const handleTransaction = async ( _amount: number|BigInt ) => {
 
         try{
-            if(address && isConnected){
+            if(address && isConnected && vault){
 
                 if( CHAINS.get(chainId) !== undefined ){
 

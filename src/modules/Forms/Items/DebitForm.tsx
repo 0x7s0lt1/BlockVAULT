@@ -17,13 +17,13 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
     const { address, chainId, isConnected } = useWeb3ModalAccount();
     const { walletProvider } = useWeb3ModalProvider();
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [name, setName] = useState('');
-    const [cardId, setCardId] = useState('');
-    const [nameOnCard, setNameOnCard] = useState('');
-    const [expireAt, setExpireAt] = useState('');
-    const [cvv, setCvv] = useState('');
-    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [name, setName] = useState<string>('');
+    const [cardId, setCardId] = useState<string>('');
+    const [nameOnCard, setNameOnCard] = useState<string>('');
+    const [expireAt, setExpireAt] = useState<string>("");
+    const [cvv, setCvv] = useState<string>("");
+    const [error, setError] = useState<string|null>('');
 
     const handleNameChange = (e: any) => {
         setName(e.target.value);
@@ -48,8 +48,8 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
         let _name = name.trim();
         let _cardId = cardId.trim();
         let _nameOnCard = nameOnCard.trim();
-        let _expireAt = parseInt(expireAt);
-        let _cvv = cvv;
+        let _expireAt = BigInt(expireAt);
+        let _cvv = BigInt(cvv);
 
         if(!_name || !_cardId || !_nameOnCard || !_expireAt || !_cvv){
             setError("Please fill in all fields.");
@@ -81,7 +81,7 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
             return;
         }
 
-        if(_expireAt.length > 4){
+        if(_expireAt > 9999){
             setError("Expire at must be less than 4 characters.");
             setIsLoading(false);
             return;
@@ -93,15 +93,15 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
             return;
         }
 
-        if(_cvv.length > 3){
-            setError("Cvv must be less than 3 characters.");
+        if(_cvv > 999){
+            setError("Cvv must be less than 4 characters.");
             setIsLoading(false);
             return;
         }
 
         if(!isCreate && item){
 
-            if(_name == item.name && _cardId == item.card_id && _nameOnCard == item.name_on_card && _expireAt == item.expire_at && _cvv == item.cvv){
+            if( _name == item.name && _cardId == item.card_id && _nameOnCard == item.name_on_card && _expireAt == item.expire_at && _cvv == item.cvv ){
                 setError("No changes were made.");
                 setIsLoading(false);
                 return;
@@ -120,8 +120,8 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
             setName(item.name);
             setCardId(item.card_id);
             setNameOnCard(item.name_on_card);
-            setExpireAt(item.expire_at);
-            setCvv(item.cvv);
+            setExpireAt(item.expire_at.toString());
+            setCvv(item.cvv.toString());
         }else{
             setName("");
             setCardId("");
@@ -132,24 +132,24 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
 
     }, [isCreate]);
 
-    const handleTransaction = async ( _name: string, _cardId: string, nameOnCard: string, expireAt: string, cvv: string) => {
+    const handleTransaction = async ( _name: string, _cardId: string, nameOnCard: string, expireAt: BigInt, cvv: BigInt) => {
 
         try{
-            if(address && isConnected){
+            if(address && isConnected && vault && item && walletProvider){
 
                 if( CHAINS.get(chainId) !== undefined ){
 
                     let card;
 
                     if(isCreate){
-                        card = await vault['createDebitCard']( _name, _cardId, nameOnCard, Number(expireAt), Number(cvv), {from: address} );
+                        card = await vault['createDebitCard']( _name, _cardId, nameOnCard, expireAt, cvv, {from: address} );
                     }else{
 
                         const provider = new BrowserProvider(walletProvider);
                         const signer = await provider.getSigner();
                         const contract = new Contract(item.address, DebABI, signer);
 
-                        card = await contract['setItem']( _name, _cardId, nameOnCard, Number(expireAt), Number(cvv), {from: address} );
+                        card = await contract['setItem']( _name, _cardId, nameOnCard, expireAt, cvv, {from: address} );
 
                     }
 
@@ -161,6 +161,7 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
                         setNameOnCard("");
                         setExpireAt("");
                         setCvv("");
+
                         setListView();
 
                     });

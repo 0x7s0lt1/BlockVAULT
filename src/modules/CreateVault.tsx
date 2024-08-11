@@ -1,7 +1,7 @@
 "use client"
 
-import React, {FC, useEffect, useState} from "react";
-import { BigNumber, BrowserProvider, Contract, parseUnits } from "ethers";
+import { FC, useEffect, useState } from "react";
+import { BrowserProvider, Contract, parseUnits } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider, useSwitchNetwork  } from '@web3modal/ethers/react';
 import { ADDRESS as ManagerAddress, ABI as ManagerABI, chainIdAddressMap } from "@/common/contract/Manager/Contract";
 import { ABI as VaultABI } from "@/common/contract/UserVault/Contract";
@@ -12,9 +12,9 @@ type Props = {
 }
 const CreateVault : FC<Props> = ({ setVault }) => {
 
-    const [isLoading, setIsLoading] = useState<any>(false);
-    const [statusMessage, setStatusMessage] = useState<any>("Waiting confirmation...");
-    const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [statusMessage, setStatusMessage] = useState<string|null>("Waiting confirmation...");
+    const [error, setError] = useState<string|null>(null);
 
     const { walletProvider } = useWeb3ModalProvider();
     const { switchNetwork } = useSwitchNetwork();
@@ -27,13 +27,13 @@ const CreateVault : FC<Props> = ({ setVault }) => {
 
         try{
 
-            if(address && isConnected){
+            if(address && isConnected && walletProvider){
 
                 if(CHAINS.get(chainId) !== undefined){
 
                     const provider = new BrowserProvider(walletProvider);
                     const signer = await provider.getSigner();
-                    const contract = new Contract( chainIdAddressMap.get(chainId), ManagerABI, signer );
+                    const contract = new Contract( chainIdAddressMap.get(chainId) ?? "", ManagerABI, signer );
 
                     //const gasLimit = parseUnits("10", "gwei");
                     //const gasLimit = estimatedGas.mul(BigNumber.from(110)).div(BigNumber.from(100));
@@ -63,7 +63,7 @@ const CreateVault : FC<Props> = ({ setVault }) => {
 
                 }else{
 
-                    await switchNetwork(CHAINS.get(137)?.chainId);
+                    await switchNetwork(137);
                     setIsLoading(false);
                 }
 

@@ -110,7 +110,7 @@ const PasswordForm : FC<Props> = ({isCreate, vault, setListView, item}) => {
     const handleTransaction = async ( _name: string, _url: string, _userName: string, _password: string ) => {
 
         try{
-            if(address && isConnected){
+            if(address && isConnected && vault && item && walletProvider){
 
                 if( CHAINS.get(chainId) !== undefined ){
 

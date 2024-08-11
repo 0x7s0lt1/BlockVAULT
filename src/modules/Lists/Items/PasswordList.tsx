@@ -19,7 +19,7 @@ import { CHAINS } from "@/types/Utils";
 type Props = {
     setItems: Function,
     isSearch: boolean,
-    searchResults: Array<Password>,
+    searchResults: Array<typeof Password>,
     setFormEditView: Function,
     item: LoyalityCardType|null,
     setItem: Function,
@@ -59,7 +59,7 @@ const PasswordList : FC<Props> = ({
         setItemsMap(<span className={"empty-label"}>No Passwords Yet</span>);
 
         try {
-            if (address && isConnected){
+            if (address && isConnected && vault && walletProvider){
 
                 if( CHAINS.get(chainId) !== undefined ){
 

@@ -19,7 +19,7 @@ import { CHAINS } from "@/types/Utils";
 type Props = {
     setItems: Function,
     isSearch: boolean,
-    searchResults: Array<LoyalityCard>,
+    searchResults: Array<typeof LoyalityCard>,
     setFormEditView: Function,
     item: LoyalityCardType|null,
     setItem: Function,
@@ -61,7 +61,7 @@ const LoyalityList : FC<Props> = ({
 
         try {
 
-            if (address && isConnected){
+            if (address && isConnected && vault && walletProvider){
 
                 if( CHAINS.get(chainId) !== undefined ){
 

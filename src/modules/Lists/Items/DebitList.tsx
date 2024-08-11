@@ -19,7 +19,7 @@ import DebitCard from "@/modules/Items/DebitCard";
 type Props = {
     setItems: Function,
     isSearch: boolean,
-    searchResults: Array<DebitCard>,
+    searchResults: Array<typeof DebitCard>,
     setFormEditView: Function,
     item: DebitCardType|null,
     setItem: Function,
@@ -59,7 +59,7 @@ const DebitList : FC<Props> = ({
         setItemsMap(<span className={"empty-label"}>No Debit Cards Yet</span>);
 
         try {
-            if (address && isConnected){
+            if (address && isConnected && vault && walletProvider){
 
                 if( CHAINS.get(chainId) !== undefined ){
 

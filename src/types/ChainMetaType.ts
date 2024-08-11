@@ -3,7 +3,7 @@ type ChainMetaType = {
     name: string
     currency: string
     explorerUrl: string
-    rpcUrls: string
+    rpcUrl: string
 }
 
 export const isChainMetaType = (obj: any): obj is ChainMetaType => {

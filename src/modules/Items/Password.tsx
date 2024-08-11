@@ -23,6 +23,10 @@ const Password: FC<Props> = ({item, setFormEditView, setItem, setIsModalVisible,
 
         try{
 
+            if (!walletProvider) {
+                return false;
+            }
+
             const provider = new BrowserProvider(walletProvider);
             const signer = await provider.getSigner();
 

@@ -83,7 +83,7 @@ const LoyalityForm : FC<Props> = ({isCreate, vault, setListView, item}) => {
     const handleTransaction = async ( _name: string, _number: string ) => {
 
         try{
-            if(address && isConnected){
+            if(address && isConnected && vault && item && walletProvider){
 
                 if( CHAINS.get(chainId) !== undefined ){
 

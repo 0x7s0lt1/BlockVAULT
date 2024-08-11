@@ -23,6 +23,10 @@ const LoyalityCard: FC<Props> = ({item, setFormEditView, setItem, setIsModalVisi
 
         try{
 
+            if (!walletProvider) {
+                return false;
+            }
+
             const provider = new BrowserProvider(walletProvider);
             const signer = await provider.getSigner();
 
