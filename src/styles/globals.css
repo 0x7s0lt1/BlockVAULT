@@ -62,7 +62,7 @@ html,body{
     display: flex;
     align-items: center;
     justify-content: center;
-    max-width: 60%;
+    max-width: 95%;
     backdrop-filter: blur(5px);
     border-radius: 29px;
     border: 2px solid white;
