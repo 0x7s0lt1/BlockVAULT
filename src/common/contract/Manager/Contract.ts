@@ -2,7 +2,7 @@ export const ADDRESS = "0x0f68cfd9c6c7b9c6a96ba4bd58c7cda08f5c88ae";
 export const chainIdAddressMap: Map<number, string> = new Map<number, string>([
     [ 137,          "0x0f68cfd9c6c7b9c6a96ba4bd58c7cda08f5c88ae" ], // Polygon
     [ 1,            "0xaf3897d818d5cf36490ef0a282c6232fab8790b4" ], // Ethereum
-    [ 11155111,     "0xea61fd270f6c84ab9f6d9e3bb9005fcc95985caa" ], // Sepolia
+    [ 11155111,     "0xea61fd270f6c84ab9f6d9e3bb9005fcc95985caa" ], // Sepolia // 0x3d576B35dDf6c8B6898317B9f0F21f67199c4FAF
     [ 8453,         "0xea61fd270f6c84ab9f6d9e3bb9005fcc95985caa" ], // Base
     [ 43114,        "0xea61fd270f6c84ab9f6d9e3bb9005fcc95985caa" ], // Avalanche
     [ 56,           "0xea61fd270f6c84ab9f6d9e3bb9005fcc95985caa" ], // Binance
