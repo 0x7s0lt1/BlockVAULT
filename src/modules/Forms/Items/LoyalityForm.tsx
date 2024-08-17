@@ -3,10 +3,9 @@ import { FC, useEffect, useState } from "react";
 import { BrowserProvider, Contract, formatEther } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
 import { ABI as LoyABI } from "@/common/contract/Items/LoyalityCardContract";
-import { ABI as VaultABI } from "@/common/contract/UserVault/Contract";
+import { ABI as VaultABI } from "@/common/contract/Vault/Contract";
 import LoyalityCardType from "@/types/Items/LoyalityCardType";
 import { CHAINS, getUserBalance } from "@/types/Utils";
-import {ABI as DebABI} from "@/common/contract/Items/DebitCardContract";
 
 type Props = {
     isCreate: boolean,

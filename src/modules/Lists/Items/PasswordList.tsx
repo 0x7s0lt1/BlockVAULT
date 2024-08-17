@@ -65,7 +65,8 @@ const PasswordList : FC<Props> = ({
 
                     if (CHAINS.get(chainId) !== undefined) {
 
-                        const addresses = await vault['getItem'](ItemType.PASSWORD, {from: address});
+                        let addresses = await vault['getItem'](ItemType.PASSWORD, {from: address});
+                        addresses = addresses.concat( await vault['getSharedItems']( ItemType.PASSWORD, {from: address}) );
 
                         if (addresses.length > 0) {
 
@@ -77,15 +78,36 @@ const PasswordList : FC<Props> = ({
                             for (const _address of addresses) {
 
                                 const contract = new Contract(_address, PswABI, signer);
-                                const card = await contract['expose']({from: address});
 
-                                _items.push({
-                                    name: card[0],
-                                    url: card[1],
-                                    user_name: card[2],
-                                    password: card[3],
-                                    address: _address
-                                } as PasswordType);
+                                try{
+
+                                    const card = await contract['expose']({from: address});
+                                    const isOwn = await contract['isOwn']({from: address});
+
+                                    _items.push({
+                                        isOwn,
+                                        name: card[0],
+                                        url: card[1],
+                                        user_name: card[2],
+                                        password: card[3],
+                                        address: _address
+                                    } as PasswordType);
+
+                                }catch (e) {
+
+                                    console.log(e);
+
+                                    _items.push({
+                                        isOwn: false,
+                                        name: "",
+                                        url: "( access cancelled )",
+                                        user_name: "",
+                                        password: "",
+                                        address: _address,
+                                        restricted: true
+                                    } as PasswordType);
+
+                                }
 
                             }
 

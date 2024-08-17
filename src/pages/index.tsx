@@ -9,7 +9,7 @@ import ConnectWallet from "@/modules/ConnectWallet";
 import { BrowserProvider, Contract, formatUnits } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider, useSwitchNetwork  } from '@web3modal/ethers/react';
 import { ABI as ManagerABI, chainIdAddressMap } from "@/common/contract/Manager/Contract";
-import { ABI as VaultABI } from "@/common/contract/UserVault/Contract";
+import { ABI as VaultABI } from "@/common/contract/Vault/Contract";
 import { Routes, Route } from "react-router-dom";
 import VaultInfo from "@/modules/VaultInfo";
 import Loyality from "@/pages/Items/Loyality";
@@ -19,6 +19,9 @@ import Deposit from "@/pages/Payable/Deposit";
 import Withdraw from "@/pages/Payable/Withdraw";
 import ItemsNav from "@/modules/ItemsNav";
 import { CHAINS, DEFAULT_ADDRESS } from "@/types/Utils";
+import { VersionManagers, ABI as VersionManagerABI } from "@/common/contract/VersionManager/Contract";
+// import NetworkInfo from "@/modules/NetworkInfo";
+import Share from "@/pages/Share";
 
 const Index : FC = () => {
 
@@ -26,6 +29,8 @@ const Index : FC = () => {
     const { address, chainId, isConnected } = useWeb3ModalAccount();
     const { walletProvider } = useWeb3ModalProvider();
 
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [manager, setManager] = useState<Contract|null>(null);
     const [vault, setVault] = useState<Contract|null>(null);
     const [ticker, setTicker] = useState<string>("UNKNOWN");
     const [balance, setBalance] = useState<number>(0);
@@ -42,15 +47,35 @@ const Index : FC = () => {
         }
     }
 
-    const fetchVault = async () => {
+    const fetchManager = async () => {
 
-        if( CHAINS.get(chainId) != undefined && walletProvider ){
+        const vmAddr = VersionManagers.get(chainId);
+
+        if( CHAINS.get(chainId) != undefined && vmAddr != undefined && walletProvider ){
 
             const provider = new BrowserProvider(walletProvider);
             const signer = await provider.getSigner();
-            const contract = new Contract( chainIdAddressMap.get(chainId) ?? "", ManagerABI, signer );
+            const vsm = new Contract( vmAddr, VersionManagerABI, signer );
 
-            const vaultAddr = await contract['getVaultByOwner']({from: address});
+            const mngAddr = await vsm['getCurrentManager']({from: address});
+            const mng = new Contract( mngAddr, ManagerABI, signer );
+
+            setManager( mng );
+
+        }else{
+            await switchNetwork(11155111);
+        }
+
+    }
+
+    const fetchVault = async () => {
+
+        if( CHAINS.get(chainId) != undefined && walletProvider && manager){
+
+            const provider = new BrowserProvider(walletProvider);
+            const signer = await provider.getSigner();
+
+            const vaultAddr = await manager['getVaultByOwner']({from: address});
 
             if(vaultAddr != DEFAULT_ADDRESS){
                 setVault( new Contract( vaultAddr, VaultABI, signer ) );
@@ -60,7 +85,7 @@ const Index : FC = () => {
             }
 
         }else{
-            await switchNetwork(137);
+            await switchNetwork(11155111);
         }
 
     }
@@ -70,7 +95,7 @@ const Index : FC = () => {
         (async()=>{
 
             if(address && isConnected){
-                await fetchVault();
+                await fetchManager();
             }
 
         })();
@@ -80,6 +105,8 @@ const Index : FC = () => {
     useEffect(() => {
         (async ()=>{
             await fetchBalance();
+
+            setIsLoading(false);
         })();
     }, [vault]);
 
@@ -88,7 +115,7 @@ const Index : FC = () => {
         if(isConnected){
 
             (async ()=>{
-                await fetchVault();
+                await fetchManager();
             })();
 
         }else{
@@ -99,8 +126,20 @@ const Index : FC = () => {
 
     useEffect(() => {
 
+        if(manager){
+
+            (async ()=>{
+                await fetchVault();
+            })();
+
+        }
+
+    }, [manager]);
+
+    useEffect(() => {
+
         (async ()=>{
-            await fetchVault();
+            await fetchManager();
         })();
 
     }, []);
@@ -110,36 +149,49 @@ const Index : FC = () => {
 
             <Meta />
 
-            {
-                !isConnected ? <ConnectWallet/> : !vault ? <><CreateVault setVault={setVault}/></> : <></>
+            {isLoading ?
+                <>
+                    <div className={"loader"}></div>
+                </> :
+                <>
+
+                    {
+                        !isConnected ? <ConnectWallet/> : !vault ? <><CreateVault manager={manager} setVault={setVault}/></> : <></>
+                    }
+
+                    <section className={"dash"}>
+
+                        {
+                            vault && isConnected &&
+                            <>
+                                <div className={"nav"}>
+                                    <VaultInfo ticker={ticker} balance={balance} vault={vault}/>
+                                    <ItemsNav/>
+                                    {/*<NetworkInfo/>*/}
+                                </div>
+                                <div className={"board slot-hover"}>
+                                    <Routes>
+
+                                        <Route index path="/" element={<Password vault={vault}/>} ></Route>
+
+                                        <Route path="/share/:item_type/:item_addr" element={<Share vault={vault}/>} ></Route>
+
+                                        <Route  path="/deposit" element={<Deposit fetchBalance={fetchBalance} vault={vault}/>} ></Route>
+                                        <Route  path="/withdraw" element={<Withdraw balance={balance} fetchBalance={fetchBalance} vault={vault}/>} ></Route>
+
+                                        <Route path="/loyality" element={<Loyality vault={vault}/>} ></Route>
+                                        <Route path="/debit" element={<Debit vault={vault}/>} ></Route>
+                                        <Route path="/password" element={<Password vault={vault}/>} ></Route>
+                                    </Routes>
+                                </div>
+                            </>
+                        }
+
+                    </section>
+
+
+                </>
             }
-
-            <section className={"dash"}>
-
-                {
-                    vault && isConnected &&
-                    <>
-                        <div className={"nav"}>
-                            <VaultInfo ticker={ticker} balance={balance} vault={vault}/>
-                            <ItemsNav/>
-                        </div>
-                        <div className={"board slot-hover"}>
-                            <Routes>
-
-                                <Route index path="/" element={<Password vault={vault}/>} ></Route>
-
-                                <Route  path="/deposit" element={<Deposit fetchBalance={fetchBalance} vault={vault}/>} ></Route>
-                                <Route  path="/withdraw" element={<Withdraw balance={balance} fetchBalance={fetchBalance} vault={vault}/>} ></Route>
-
-                                <Route path="/loyality" element={<Loyality vault={vault}/>} ></Route>
-                                <Route path="/debit" element={<Debit vault={vault}/>} ></Route>
-                                <Route path="/password" element={<Password vault={vault}/>} ></Route>
-                            </Routes>
-                        </div>
-                    </>
-                }
-
-            </section>
 
         </MainLayout>
     )

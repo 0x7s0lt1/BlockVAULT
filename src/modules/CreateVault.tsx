@@ -4,13 +4,14 @@ import { FC, useEffect, useState } from "react";
 import { BrowserProvider, Contract, parseUnits } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider, useSwitchNetwork  } from '@web3modal/ethers/react';
 import { ADDRESS as ManagerAddress, ABI as ManagerABI, chainIdAddressMap } from "@/common/contract/Manager/Contract";
-import { ABI as VaultABI } from "@/common/contract/UserVault/Contract";
+import { ABI as VaultABI } from "@/common/contract/Vault/Contract";
 import { DEFAULT_ADDRESS, CHAINS } from "@/types/Utils";
 
 type Props = {
+    manager: Contract | null,
     setVault: Function
 }
-const CreateVault : FC<Props> = ({ setVault }) => {
+const CreateVault : FC<Props> = ({ manager, setVault }) => {
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [statusMessage, setStatusMessage] = useState<string|null>("Waiting confirmation...");
@@ -27,25 +28,24 @@ const CreateVault : FC<Props> = ({ setVault }) => {
 
         try{
 
-            if(address && isConnected && walletProvider){
+            if(address && isConnected && walletProvider && manager){
 
                 if(CHAINS.get(chainId) !== undefined){
 
                     const provider = new BrowserProvider(walletProvider);
                     const signer = await provider.getSigner();
-                    const contract = new Contract( chainIdAddressMap.get(chainId) ?? "", ManagerABI, signer );
 
                     //const gasLimit = parseUnits("10", "gwei");
                     //const gasLimit = estimatedGas.mul(BigNumber.from(110)).div(BigNumber.from(100));
                     //const gasPrice = (await provider.getFeeData()).gasPrice;
 
-                    const create = await contract['createVault']({from: address});
+                    const create = await manager['createVault']({from: address});
 
                     setStatusMessage("Deploying Contract...");
 
                     create.wait().then( async () => {
 
-                        const vaultAddr = await contract['getVaultByOwner']({from: address});
+                        const vaultAddr = await manager['getVaultByOwner']({from: address});
 
                         if(vaultAddr != DEFAULT_ADDRESS){
                             setVault( new Contract( vaultAddr, VaultABI, signer ) );

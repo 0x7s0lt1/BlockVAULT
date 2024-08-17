@@ -1,7 +1,7 @@
 
 <h1 align="center">BlockVAULT</h1>
 <p align="center">
-OnChain password and secret manager
+Decentralized secret manager
 </p>
 
 ## Solidity
@@ -21,12 +21,16 @@ OnChain password and secret manager
 </thead>
 <tbody>
 <tr>
+<td>Sepholia</td>
+<td>0x5beebfa04ee5b6c0593e3a7374078b2f66917fcc</td>
+</tr>
+<tr>
 <td>Ethereum</td>
 <td>0x0000000000000000000000000000000000000000</td>
 </tr>
 <tr>
-<td>Sepholia</td>
-<td>0x4261f9F93777a2f102D97C5d6CC567cBBEB9e0f5</td>
+<td>BSC</td>
+<td>0x0000000000000000000000000000000000000000</td>
 </tr>
 <tr>
 <td>Polygon</td>
@@ -38,6 +42,14 @@ OnChain password and secret manager
 </tr>
 <tr>
 <td>Avalance</td>
+<td>0x0000000000000000000000000000000000000000</td>
+</tr>
+<tr>
+<td>Arbitrum</td>
+<td>0x0000000000000000000000000000000000000000</td>
+</tr>
+<tr>
+<td>Optimism</td>
 <td>0x0000000000000000000000000000000000000000</td>
 </tr>
 </tbody>

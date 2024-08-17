@@ -63,7 +63,8 @@ const DebitList : FC<Props> = ({
 
                 if( CHAINS.get(chainId) !== undefined ){
 
-                    const addresses = await vault['getItem']( ItemType.DEBIT_CARD, {from: address});
+                    let addresses = await vault['getItem']( ItemType.DEBIT_CARD, {from: address});
+                    addresses = addresses.concat( await vault['getSharedItems']( ItemType.DEBIT_CARD, {from: address}) );
 
                     if(addresses.length > 0){
 
@@ -75,18 +76,40 @@ const DebitList : FC<Props> = ({
                         for (const _address of addresses) {
 
                             const contract = new Contract(_address, DebABI, signer);
-                            const card = await contract['expose']({from: address});
 
-                            _items.push({
-                                name: card[0],
-                                card_id: card[1],
-                                name_on_card: card[2],
-                                expire_at: card[3],
-                                cvv: card[4],
-                                address: _address
-                            } as DebitCardType );
+                            try{
+
+                                const card = await contract['expose']({from: address});
+                                const isOwn = await contract['isOwn']({from: address});
+
+                                _items.push({
+                                    isOwn,
+                                    name: card[0],
+                                    card_id: card[1],
+                                    name_on_card: card[2],
+                                    expire_at: card[3],
+                                    cvv: card[4],
+                                    address: _address
+                                } as DebitCardType );
+
+                            }catch (e) {
+                                console.log(e);
+
+                                _items.push({
+                                    isOwn: false,
+                                    name: "",
+                                    card_id: "( access cancelled )",
+                                    name_on_card: "",
+                                    expire_at: BigInt(0),
+                                    cvv: BigInt(0),
+                                    address: _address,
+                                    restricted: true
+                                } as DebitCardType );
+
+                            }
 
                         }
+                        console.log(_items);
 
                         setItems(_items);
                         setItemsMap(

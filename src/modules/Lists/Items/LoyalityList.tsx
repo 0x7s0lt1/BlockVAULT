@@ -67,7 +67,10 @@ const LoyalityList : FC<Props> = ({
 
                 if( CHAINS.get(chainId) !== undefined ){
 
-                    const addresses = await vault['getItem']( ItemType.LOYALITY_CARD, {from: address});
+                    let addresses = await vault['getItem']( ItemType.LOYALITY_CARD, {from: address});
+                    addresses = addresses.concat( await vault['getSharedItems']( ItemType.LOYALITY_CARD, {from: address}) );
+
+                    console.log(addresses);
 
                     if(addresses.length > 0){
 
@@ -79,13 +82,31 @@ const LoyalityList : FC<Props> = ({
                         for (const _address of addresses) {
 
                             const contract = new Contract(_address, LoyABI, signer);
-                            const card = await contract['expose']({from: address});
 
-                            _items.push({
-                                name: card[0],
-                                number: card[1],
-                                address: _address
-                            } as LoyalityCardType );
+                            try{
+                                const card = await contract['expose']({from: address});
+                                const isOwn = await contract['isOwn']({from: address});
+
+                                _items.push({
+                                    isOwn,
+                                    name: card[0],
+                                    number: card[1],
+                                    address: _address
+                                } as LoyalityCardType );
+
+                            }catch (e){
+                                console.log(e);
+
+                                _items.push({
+                                    isOwn: false,
+                                    name: "",
+                                    number: "( access cancelled )",
+                                    address: _address,
+                                    restricted: true
+                                } as LoyalityCardType );
+
+                            }
+
 
                         }
 

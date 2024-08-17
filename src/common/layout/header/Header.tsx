@@ -25,7 +25,9 @@ const Header : FC = () => {
                 {/*    /!*    Token*!/*/}
                 {/*    /!*</Link>*!/*/}
                 {/*</nav>*/}
-                { isConnected && <w3m-button balance="hide" size="md"/> }
+                <div className={"d-flex align-items-center"}>
+                    {isConnected && <w3m-button balance="hide" size="md"/>}
+                </div>
             </header>
         </>
     )
