@@ -78,10 +78,16 @@ html,body{
     justify-content: center;
     max-width: 95%;
     backdrop-filter: blur(5px);
-    border-radius: 29px;
-    border: 2px solid white;
+    /*border-radius: 29px;*/
+    border-bottom-left-radius: 29px;
+    border-bottom-right-radius: 29px;
+    /*border: 1px solid white;*/
+    border-left: 0px;
+    border-right: 0px;
 
-    box-shadow: 23px 23px 1px whitesmoke;
+    border-top: 0px;
+
+    /*box-shadow: 23px 23px 1px whitesmoke;*/
 }
 
 .card{
@@ -299,7 +305,8 @@ nav{
 
 .form-wrapper{
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    /*flex-direction: column;*/
     justify-content: center;
     align-items: center;
     width: 100%;
@@ -485,6 +492,9 @@ nav{
     border: none !important;
 }
 
+.mr-5{
+    margin-right: 5px;
+}
 .w-40{
     width: 40% !important;
 }

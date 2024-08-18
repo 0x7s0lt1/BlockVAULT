@@ -132,7 +132,7 @@ const LoyalityCard: FC<Props> = ({item, setFormEditView, setItem, setIsModalVisi
                         item.isOwn && <>
                         <button onClick={handleEdit} className="btn-hover btn-circle"><PencilSquare/></button>
                             <Link to={"/share/" + ItemType.LOYALITY_CARD + "/" + item.address}
-                                  className="btn-hover btn-circle">
+                                  className="btn-hover btn-circle mr-5">
                                 <Share/>
                             </Link>
                         </>

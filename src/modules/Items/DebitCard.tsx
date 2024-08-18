@@ -137,7 +137,7 @@ const DebitCard: FC<Props> = ({ item, setFormEditView, setItem, setIsModalVisibl
                         item.isOwn && <>
                             <button onClick={handleEdit} className="btn-hover btn-circle"><PencilSquare/></button>
                             <Link to={"/share/" + ItemType.DEBIT_CARD + "/" + item.address}
-                                  className="btn-hover btn-circle">
+                                  className="btn-hover btn-circle mr-5">
                                 <Share/>
                             </Link>
                         </>

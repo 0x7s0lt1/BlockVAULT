@@ -7,6 +7,14 @@ Decentralized secret manager
 ## Solidity
 [https://github.com/0x7s0lt1/blockVault.sol](https://github.com/0x7s0lt1/blockVault.sol)
 
+### 🔨 Install
+```shell
+pnpm i
+```
+### 🏃 Run
+```shell
+pnpm dev
+```
 ## Version Managers
 <table>
 <thead>

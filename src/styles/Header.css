@@ -15,7 +15,8 @@
     padding: 20px;
     margin-top: 25px;
     min-height: 50px;
-    background: #1a1919 !important;
+    /*background: #1a1919 !important;*/
+    /*background: linear-gradient(to top, #1a1919 30%, transparent 100%, transparent 80%) !important;*/
     /*background: #d4be20 !important;*/
     border-radius: 28px;
     display: flex;
@@ -26,6 +27,9 @@
     transform: scaleX(1);
     z-index: 5;
     border: 2px solid white;
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
 }
 label{
     letter-spacing: 5px;

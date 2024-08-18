@@ -2,7 +2,7 @@
 import { FC, useEffect, useState } from "react";
 import { BrowserProvider, Contract, formatEther, isAddress } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
-import { CHAINS, getUserBalance, ItemTypeToABIMap } from "@/types/Utils";
+import { CHAINS, DEFAULT_ADDRESS, getUserBalance, ItemTypeToABIMap } from "@/types/Utils";
 import {ItemType, ItemTypeToReadableMap} from "@/types/ItemType";
 
 type Props = {
@@ -70,7 +70,7 @@ const ShareImportForm : FC<Props> = ({ itemType, vault, setListView }) => {
         try{
             if(address && isConnected && provider && vault && isAddress(_a)){
 
-                const gasEstimate = await vault['addSharedItem']( _t, _a, { from: address }) ?? BigInt(0);
+                const gasEstimate = await vault.addSharedItem.estimateGas( _t, _a, { from: address }) ?? BigInt(0);
                 const gasPrice = (await provider.getFeeData()).gasPrice ?? BigInt(0);
 
                 const totalCostWei= BigInt.asUintN(64,gasPrice) * BigInt.asUintN(64,gasEstimate);
@@ -142,6 +142,7 @@ const ShareImportForm : FC<Props> = ({ itemType, vault, setListView }) => {
                 <div className={"form-slot"}>
                     <h5 className={"form-label"}> {ItemTypeToReadableMap.get(itemType) ?? ""} Address</h5>
                     <input className={"form-input"} type={"text"} name={"name"} value={_itmAddress}
+                           placeholder={DEFAULT_ADDRESS}
                            onChange={handleItmAddressChange}/>
                 </div>
 

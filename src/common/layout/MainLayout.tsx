@@ -1,9 +1,9 @@
 "use client"
 
-import React, {FC, useState} from "react";
+import React, { FC } from "react";
 import PageUp from "@/common/layout/PageUp";
 import Header from "@/common/layout/header/Header";
-import Footer from "@/common/layout/footer/Footer";
+// import Footer from "@/common/layout/footer/Footer";
 import { MemoryRouter } from "react-router-dom";
 
 type Props = {

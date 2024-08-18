@@ -3,7 +3,6 @@
 import { FC, useEffect, useState } from "react";
 import { BrowserProvider, Contract, parseUnits } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider, useSwitchNetwork  } from '@web3modal/ethers/react';
-import { ADDRESS as ManagerAddress, ABI as ManagerABI, chainIdAddressMap } from "@/common/contract/Manager/Contract";
 import { ABI as VaultABI } from "@/common/contract/Vault/Contract";
 import { DEFAULT_ADDRESS, CHAINS } from "@/types/Utils";
 

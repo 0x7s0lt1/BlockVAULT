@@ -136,7 +136,8 @@ const Password: FC<Props> = ({item, setFormEditView, setItem, setIsModalVisible,
                     {
                         item.isOwn && <>
                             <button onClick={handleEdit} className="btn-hover btn-circle"><PencilSquare/></button>
-                            <Link to={"/share/" + ItemType.PASSWORD + "/" + item.address} className="btn-hover btn-circle">
+                            <Link to={"/share/" + ItemType.PASSWORD + "/" + item.address}
+                                  className="btn-hover btn-circle mr-5">
                                 <Share/>
                             </Link>
                         </>
