@@ -1,5 +1,5 @@
 import Head from "next/head";
-import {FC, useEffect} from "react";
+import { FC, useEffect } from "react";
 
 type Props = {
     title?: string;
@@ -13,15 +13,15 @@ type Props = {
     ogImage?: string;
 }
 const Meta : FC<Props> = ({
-                            title = "BlockVault",
-                            description = "OnChain password manager",
+                            title = "BlockVAULT",
+                            description = "Decentralized secret manager",
                             favIcon = "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔑</text></svg>",
                             themeColor = "#000000",
-                            ogUrl = "OnChain password manager",
+                            ogUrl = "Decentralized secret manager",
                             ogType = "website",
-                            ogTitle = "BlockVault",
-                            ogDescription = "OnChain password manager",
-                            ogImage = "https://images.unsplash.com/photo-1651955784685-f969100bfc25",
+                            ogTitle = "BlockVAULT",
+                            ogDescription = "Decentralized secret manager",
+                            ogImage = "/img/og/og.webp",
                           }) => {
 
     useEffect(() => {
@@ -67,7 +67,10 @@ const Meta : FC<Props> = ({
             <meta property="og:description" content={ogDescription}/>
             <meta property="og:image" content={ogImage}/>
 
+            <link rel="manifest" href="/manifest.json"/>
+
             <script async src="https://www.googletagmanager.com/gtag/js?id=G-MQ9R21RBCN"></script>
+            <script async src="/js/pwa-sw.js"></script>
 
         </Head>
     )
