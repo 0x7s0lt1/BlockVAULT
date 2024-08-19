@@ -18,13 +18,13 @@ export const CHAINS: Map<number, ChainMetaType> = new Map<number, ChainMetaType>
     //     explorerUrl: "https://etherscan.io",
     //     rpcUrls: "https://rpc.flashbots.net/fast"
     // }],
-    // [137, {
-    //     chainId: 137,
-    //     name: "Polygon",
-    //     currency: "MATIC",
-    //     explorerUrl: "https://polygonscan.com",
-    //     rpcUrl: "https://polygon-rpc.com"
-    // }],
+    [137, {
+        chainId: 137,
+        name: "Polygon",
+        currency: "MATIC",
+        explorerUrl: "https://polygonscan.com",
+        rpcUrl: "https://polygon-rpc.com"
+    }],
     [11155111, {
         chainId: 11155111,
         name: "Sepolia",
@@ -32,13 +32,13 @@ export const CHAINS: Map<number, ChainMetaType> = new Map<number, ChainMetaType>
         explorerUrl: "https://sepolia.etherscan.io",
         rpcUrl: "https://rpc.sepolia.org"
     }],
-    // [56, {
-    //     chainId: 56,
-    //     name: "Binance",
-    //     currency: "BNB",
-    //     explorerUrl: "https://bscscan.com",
-    //     rpcUrl: "https://bsc-dataseed.binance.org/"
-    // }],
+    [56, {
+        chainId: 56,
+        name: "Binance",
+        currency: "BNB",
+        explorerUrl: "https://bscscan.com",
+        rpcUrl: "https://bsc-dataseed.binance.org/"
+    }],
     // [8453, {
     //     chainId: 8453,
     //     name: "Base",
