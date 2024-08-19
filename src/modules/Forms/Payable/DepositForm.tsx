@@ -1,8 +1,8 @@
 
 import { FC, useState, useEffect } from "react";
-import {BrowserProvider, Contract, parseEther, formatEther, Signer} from "ethers";
+import { BrowserProvider, Contract, parseEther, formatEther, Signer } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
-import {CHAINS, getUserBalance} from "@/types/Utils";
+import { CHAINS, getUserBalance } from "@/types/Utils";
 
 type Props = {
     fetchBalance: Function
@@ -125,9 +125,9 @@ const DepositForm : FC<Props> = ({ fetchBalance, vault }) => {
                     <h5 className={"form-label"}>{`Amount (${CHAINS.get(chainId)?.currency})`}</h5>
                     <input className={"form-input"} type={"text"} name={"amount"} value={amount}
                            onChange={handleAmountChange}/>
-                    <p className={"mt-2 mx-2"} onClick={handleBalanceClick}>{`Balance: ${userBalance}`}</p>
+                    <p className={"mt-2 mx-2 cursor-pointer"} onClick={handleBalanceClick}>{`Balance: ${userBalance}`}</p>
                     <p className={"form-error"}>
-                        {error}
+                        &nbsp;{error}
                     </p>
                 </div>
 

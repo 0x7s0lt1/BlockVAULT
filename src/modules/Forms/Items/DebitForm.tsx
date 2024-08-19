@@ -294,26 +294,31 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
                 <div className={"form-slot"}>
                     <h5 className={"form-label"}>Card Name</h5>
                     <input className={"form-input"} type={"text"} name={"name"} value={name}
+                           placeholder={"John Doe"}
                            onChange={handleNameChange}/>
                 </div>
                 <div className={"form-slot"}>
                     <h5 className={"form-label"}>Card Number</h5>
                     <input className={"form-input"} type={"text"} name={"card_id"} value={cardId}
+                           placeholder={"1234 1234 1234 1234"}
                            onChange={handleCardIdChange}/>
                 </div>
                 <div className={"form-slot"}>
                     <h5 className={"form-label"}>Name on card</h5>
                     <input className={"form-input"} type={"text"} name={"name_on_card"} value={nameOnCard}
+                           placeholder={"John Doe"}
                            onChange={handleNameOnCardChange}/>
                 </div>
                 <div className={"form-slot"}>
                     <h5 className={"form-label"}>Expire at</h5>
                     <input className={"form-input"} type={"text"} name={"expire_at"} value={expireAt.toString()}
+                           placeholder={"MM/YY"}
                            onChange={handleExpireAtChange}/>
                 </div>
                 <div className={"form-slot"}>
                     <h5 className={"form-label"}>Cvv</h5>
                     <input className={"form-input"} type={"text"} name={"cvv"} value={cvv.toString()}
+                           placeholder={"123"}
                            onChange={handleCvvChange}/>
                 </div>
 
@@ -323,7 +328,7 @@ const DebitForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
                     }
                 </p>
                 <p className={"form-error"}>
-                    {error}
+                    &nbsp;{error}
                 </p>
 
                 <div className={"form-footer"}>

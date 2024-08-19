@@ -222,21 +222,25 @@ const PasswordForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
                 <div className={"form-slot"}>
                     <h5 className={"form-label"}>Name</h5>
                     <input className={"form-input"} type={"text"} name={"name"} value={name}
+                           placeholder={"Name of the password"}
                            onChange={handleNameChange}/>
                 </div>
                 <div className={"form-slot"}>
                     <h5 className={"form-label"}>URL</h5>
                     <input className={"form-input"} type={"text"} name={"url"} value={url}
+                           placeholder={"URL of the password"}
                            onChange={handleUrlChange}/>
                 </div>
                 <div className={"form-slot"}>
                     <h5 className={"form-label"}>User Name</h5>
                     <input className={"form-input"} type={"text"} name={"user_name"} value={userName}
+                           placeholder={"User name of the password"}
                            onChange={handleUserNameChange}/>
                 </div>
                 <div className={"form-slot"}>
                     <h5 className={"form-label"}>Password</h5>
                     <input className={"form-input"} type={"text"} name={"password"} value={password}
+                           placeholder={"***************"}
                            onChange={handlePasswordChange}/>
                 </div>
 
@@ -246,7 +250,7 @@ const PasswordForm : FC<Props> = ({ isCreate, vault, setListView, item }) => {
                     }
                 </p>
                 <p className={"form-error"}>
-                    {error}
+                    &nbsp;{error}
                 </p>
 
                 <div className={"form-footer"}>

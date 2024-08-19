@@ -201,11 +201,13 @@ const LoyalityForm : FC<Props> = ({isCreate, vault, setListView, item}) => {
                 <div className={"form-slot"}>
                     <h5 className={"form-label"}>Card Name</h5>
                     <input className={"form-input"} type={"text"} name={"name"} value={name}
+                           placeholder={"John Doe"}
                            onChange={handleNameChange}/>
                 </div>
                 <div className={"form-slot"}>
                     <h5 className={"form-label"}>Card Number</h5>
                     <input className={"form-input"} type={"text"} name={"number"} value={number}
+                           placeholder={"1234567890"}
                            onChange={handleNumberChange}/>
                 </div>
 
@@ -215,7 +217,7 @@ const LoyalityForm : FC<Props> = ({isCreate, vault, setListView, item}) => {
                     }
                 </p>
                 <p className={"form-error"}>
-                    {error}
+                    &nbsp;{error}
                 </p>
 
                 <div className={"form-footer"}>

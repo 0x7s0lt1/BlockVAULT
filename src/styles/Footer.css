@@ -1,15 +1,36 @@
 .footer{
-    background: #1a1919 !important;
     min-width: 100vw;
-    min-height: 10vw;
-    box-shadow: 0px 0px 50px rgba(192, 114, 33, 0.5);
-    margin-top: 2.5vw;
     display: flex;
     justify-content: center;
     /*position: fixed;*/
     /*bottom: 0;*/
 }
 
+.footer-inner{
+
+    /*background: #1a1919 !important;*/
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border-radius: 29px;
+    border-top: 2px solid rgba(255, 255, 255, 0.29);
+    padding: 20px;
+    background: transparent;
+
+    /*border-top: 1px solid rgba(255, 255, 255, 0.29);*/
+
+    color: rgba(255, 255, 255, 0.29);
+}
+
+.footer-link-wrapper{
+    font-size: 2rem;
+}
+
+.footer-link-wrapper a:hover {
+    color: rgba(255, 255, 255, 0.29);
+}
 
 @media only screen and (max-width: 768px) {
 

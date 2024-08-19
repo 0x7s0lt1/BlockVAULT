@@ -25,19 +25,26 @@ export const CHAINS: Map<number, ChainMetaType> = new Map<number, ChainMetaType>
         explorerUrl: "https://polygonscan.com",
         rpcUrl: "https://polygon-rpc.com"
     }],
-    [11155111, {
-        chainId: 11155111,
-        name: "Sepolia",
-        currency: "SepoliaETH",
-        explorerUrl: "https://sepolia.etherscan.io",
-        rpcUrl: "https://rpc.sepolia.org"
-    }],
     [56, {
         chainId: 56,
         name: "Binance",
         currency: "BNB",
         explorerUrl: "https://bscscan.com",
         rpcUrl: "https://bsc-dataseed.binance.org/"
+    }],
+    [42161, {
+        chainId: 42161,
+        name: "Arbitrum",
+        currency: "ETH",
+        explorerUrl: "https://arbiscan.io",
+        rpcUrl: "https://arb1.arbitrum.io/rpc"
+    }],
+    [11155111, {
+        chainId: 11155111,
+        name: "Sepolia",
+        currency: "SepoliaETH",
+        explorerUrl: "https://sepolia.etherscan.io",
+        rpcUrl: "https://rpc.sepolia.org"
     }],
     // [8453, {
     //     chainId: 8453,
@@ -52,13 +59,6 @@ export const CHAINS: Map<number, ChainMetaType> = new Map<number, ChainMetaType>
     //     currency: "AVAX",
     //     explorerUrl: "https://snowtrace.io",
     //     rpcUrl: "https://api.avax.network/ext/bc/C/rpc"
-    // }],
-    // [42161, {
-    //     chainId: 42161,
-    //     name: "Arbitrum",
-    //     currency: "ETH",
-    //     explorerUrl: "https://arbiscan.io",
-    //     rpcUrl: "https://arb1.arbitrum.io/rpc"
     // }],
     // [10, {
     //     chainId: 10,

@@ -101,9 +101,9 @@ const WithdrawForm : FC<Props> = ({ balance, fetchBalance, vault }) => {
                     <h5 className={"form-label"}>{`Amount (${CHAINS.get(chainId)?.currency})`}</h5>
                     <input className={"form-input"} type={"text"} name={"amount"} value={amount}
                            onChange={handleAmountChange}/>
-                    <p className={"mt-2 mx-2"} onClick={handleBalanceClick}>{`Contract Balance: ${balance}`}</p>
+                    <p className={"mt-2 mx-2 cursor-pointer"} onClick={handleBalanceClick}>{`Contract Balance: ${balance}`}</p>
                     <p className={"form-error"}>
-                        {error}
+                        &nbsp;{error}
                     </p>
                 </div>
 

@@ -35,14 +35,12 @@ html{
     overflow-x: hidden;
 }
 body{
-    min-height: 100vh;
     background: transparent !important;
-
 }
 html,body{
     max-width: 100vw;
     min-width: 100vw;
-    min-height: 100vh !important;
+    /*min-height: 100vh !important;*/
     box-sizing: border-box;
     margin: 0px;
     padding: 0px;
@@ -52,7 +50,7 @@ html,body{
 
 }
 .main-container{
-    min-height: 70vh;
+    min-height: 90vh;
 }
 
 .loader{
@@ -315,15 +313,16 @@ nav{
     min-height: 40vh;
 }
 .form-label{
-    font-size: 1.4vw;
+    font-size: 1.4rem;
     margin-bottom: 15px;
+    /*padding-left: 0.5rem;*/
 }
 .form-slot{
     margin-bottom: 30px;
 }
 .form-input{
     min-width: 40rem;
-    font-size: 1vw;
+    font-size: 1rem;
     background: transparent;
     border: 1px solid white;
     border-radius: 29px;
@@ -484,12 +483,18 @@ nav{
     text-decoration: none;
 }
 
-
 .border-white{
     border: 2px solid white;
 }
 .border-none{
     border: none !important;
+}
+
+.cursor-pointer{
+    cursor: pointer !important;
+}
+.bg-transparent{
+    background-color: transparent !important;
 }
 
 .mr-5{
