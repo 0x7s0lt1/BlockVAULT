@@ -46,6 +46,13 @@ export const CHAINS: Map<number, ChainMetaType> = new Map<number, ChainMetaType>
         explorerUrl: "https://sepolia.etherscan.io",
         rpcUrl: "https://rpc.sepolia.org"
     }],
+    // [59144, {
+    //     chainId: 59144,
+    //     name: "Linea",
+    //     currency: "ETH",
+    //     explorerUrl: "https://lineascan.build/",
+    //     rpcUrl: "https://rpc.linea.build"
+    // }],
     // [8453, {
     //     chainId: 8453,
     //     name: "Base",

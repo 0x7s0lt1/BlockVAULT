@@ -56,5 +56,9 @@ pnpm dev
             <td>Optimism</td> 
             <td></td>
         </tr>
+        <tr>
+            <td>Linea</td> 
+            <td></td>
+        </tr>
     </tbody>
 </table>
