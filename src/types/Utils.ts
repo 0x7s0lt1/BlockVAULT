@@ -7,6 +7,7 @@ import { ABI as DebABI } from "@/common/contract/Items/DebitCardContract";
 import CryptoJS from "crypto-js/core";
 import  AES from "crypto-js/aes";
 
+export const MAX_FILE_SIZE = 1 * 1024 * 1024 * 1024;
 export const DEFAULT_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 export const FILE_SIGN_MESSAGE = "Sign message to encrypt or decrypt file";

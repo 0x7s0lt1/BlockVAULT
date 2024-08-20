@@ -139,7 +139,6 @@ html,body{
 
 nav{
     margin-top: 20px;
-    max-width: 30rem;
     max-height: fit-content;
     display: flex;
     flex-wrap: nowrap;
@@ -156,7 +155,7 @@ nav{
     color: white;
     text-decoration: none;
     font-weight: bold;
-    padding: 1vw 2vw;
+    padding: 1rem 2rem;
     display: flex;
     align-items: center;
 }
@@ -200,7 +199,8 @@ nav{
     max-width: 50rem;
     border-radius: 28px;
     border: 2px solid white;
-    min-height: 60vh;
+    min-height: 40rem;
+    max-height: 40rem;
     flex-wrap: nowrap;
     flex-direction: column;
     color: white;
@@ -271,11 +271,12 @@ nav{
 .page-body{
     margin-top: 20px;
     padding: 10px;
-    border-radius: 29px 10px 0px 0px;
-    border-bottom: 0px !important;
-    min-height: 50vh;
-    max-height: 50vh;
+    border-radius: 29px 10px 0px 29px;
+
+    min-height: 32rem;
+    max-height: 32rem;
     overflow-y: scroll;
+    border-right: 0px !important;
 
     display: flex;
     flex-direction: column;
@@ -309,7 +310,6 @@ nav{
     width: 100%;
     padding: 10px;
     margin-top: 20px;
-    min-height: 40vh;
 }
 .form-label{
     font-size: 1.4rem;
@@ -353,7 +353,7 @@ nav{
     min-width: 90%;
 }
 .submit-btn{
-    font-size: 1.5vw;
+    font-size: 1.5rem;
 }
 
 .list-wrapper{
@@ -395,13 +395,12 @@ nav{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
     border-radius: 29px 10px 0px 0px;
     border-bottom: 0px !important;
 }
 .share-header{
     margin-left: 20px;
-    padding:  1rem 1.7rem;
+    padding: 0.5rem 1rem;
     border: 1px solid white;
     color: white;
     border-radius: 29px;
@@ -412,11 +411,12 @@ nav{
 }
 .share-type{
     padding:  0.5rem 1rem;
-    border: 1px solid white;
     text-transform: uppercase;
     color: white;
-    border-radius: 29px;
+    border-radius: 0px;
     margin-right: 10px;
+    letter-spacing: 0.2rem;
+    border-right: 1px solid white;
 }
 .share-header-link{
     font-size: 1rem;

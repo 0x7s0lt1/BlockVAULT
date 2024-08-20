@@ -3,7 +3,7 @@ import { FC, useState, useRef, useEffect } from "react";
 import { BrowserProvider, Contract } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
 import { CloudDownload, Unlock } from 'react-bootstrap-icons';
-import { decryptData, downloadFile, FILE_SIGN_MESSAGE, getBase64, maskCaracters } from "@/types/Utils";
+import {decryptData, downloadFile, FILE_SIGN_MESSAGE, getBase64, maskCaracters, MAX_FILE_SIZE} from "@/types/Utils";
 
 type Props = {
     vault?: Contract | null,
@@ -35,7 +35,15 @@ const DecrypForm : FC<Props> = ({ vault }) => {
 
         if(e.target.files.length > 0) {
             setFile( e.target.files[0] );
-            setError('');
+
+            if( e.target.files[0].size >= MAX_FILE_SIZE){
+                setError('File must be less than 2GB');
+                setIsLoading(false);
+                return;
+            }else{
+                setError('');
+            }
+
         }else{
             setError('Please choose a file to encrypt');
         }
@@ -52,17 +60,23 @@ const DecrypForm : FC<Props> = ({ vault }) => {
         setIsLoading(true);
         setError("");
 
-        let file: File|null = null;
+        let _file: File|null = null;
         if(fileRef.current && fileRef.current.files){
-            file = fileRef.current.files[0];
+            _file = fileRef.current.files[0];
         }
 
-        if(file) {
+        if(_file) {
 
             try{
-                setFile(file);
+                setFile(_file);
 
-                const base64 = await getBase64(file, true);
+                if(_file.size >= MAX_FILE_SIZE){
+                    setError('File must be less than 2GB');
+                    setIsLoading(false);
+                    return;
+                }
+
+                const base64 = await getBase64(_file, true);
                 const signature = await signer.signMessage(FILE_SIGN_MESSAGE);
 
                 const decryptedFile = decryptData( base64, signature );

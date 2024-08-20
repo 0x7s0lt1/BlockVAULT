@@ -3,7 +3,7 @@ import { FC, useState, useRef, useEffect } from "react";
 import { BrowserProvider, Contract } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
 import { CloudDownload, Lock } from 'react-bootstrap-icons';
-import { downloadFile, encryptData, FILE_SIGN_MESSAGE, getBase64, maskCaracters } from "@/types/Utils";
+import {downloadFile, encryptData, FILE_SIGN_MESSAGE, getBase64, maskCaracters, MAX_FILE_SIZE} from "@/types/Utils";
 
 type Props = {
     vault?: Contract | null,
@@ -35,7 +35,15 @@ const EncryptForm : FC<Props> = ({ vault }) => {
 
         if(e.target.files.length > 0) {
             setFile( e.target.files[0] );
-            setError('');
+
+            if(e.target.files[0].size >= MAX_FILE_SIZE){
+                setError('File must be less than 2GB');
+                setIsLoading(false);
+                return;
+            }else{
+                setError('');
+            }
+
         }else{
             setError('Please choose a file to encrypt');
         }
@@ -46,6 +54,7 @@ const EncryptForm : FC<Props> = ({ vault }) => {
             fileRef.current.click();
         }
     }
+
     const handleSubmit = async (e: any) => {
 
         e.preventDefault();
@@ -57,6 +66,12 @@ const EncryptForm : FC<Props> = ({ vault }) => {
         }
 
         if(_file) {
+
+            if(_file.size >= MAX_FILE_SIZE){
+                setError('File must be less than 2GB');
+                setIsLoading(false);
+                return;
+            }
 
             try{
                 setFile(_file);
