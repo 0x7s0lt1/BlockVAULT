@@ -1,6 +1,6 @@
 import {FC} from "react";
-import {CupHotFill, Github} from "react-bootstrap-icons";
-import {Link} from "react-router-dom";
+import { CupHotFill, Github } from "react-bootstrap-icons";
+import { Link } from "react-router-dom";
 
 const Footer: FC = () => {
     return (

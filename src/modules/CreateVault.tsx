@@ -1,6 +1,6 @@
 "use client"
 
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { BrowserProvider, Contract, parseUnits } from "ethers";
 import { useWeb3ModalAccount, useWeb3ModalProvider, useSwitchNetwork  } from '@web3modal/ethers/react';
 import { ABI as VaultABI } from "@/common/contract/Vault/Contract";
@@ -62,11 +62,9 @@ const CreateVault : FC<Props> = ({ manager, setVault }) => {
 
                 }else{
 
-                    await switchNetwork(137);
+                    await switchNetwork(11155111);
                     setIsLoading(false);
                 }
-
-                //TODO: force polyon mainnet ?
 
             }
 
@@ -77,10 +75,6 @@ const CreateVault : FC<Props> = ({ manager, setVault }) => {
         }
         
     }
-
-    useEffect(() => {
-
-    }, []);
 
     return (
         <>

@@ -4,9 +4,12 @@ import { ItemType } from "@/types/ItemType";
 import { ABI as LoyABI } from "@/common/contract/Items/LoyalityCardContract";
 import { ABI as PwsABI } from "@/common/contract/Items/PasswordContract";
 import { ABI as DebABI } from "@/common/contract/Items/DebitCardContract";
+import CryptoJS from "crypto-js/core";
+import  AES from "crypto-js/aes";
 
 export const DEFAULT_ADDRESS = "0x0000000000000000000000000000000000000000";
 
+export const FILE_SIGN_MESSAGE = "Sign message to encrypt or decrypt file";
 export const DEFAULT_SIGN_MESSAGE = "Sign this message to prove you own this wallet.";
 export const SECRET_OPEN_SIGN_MESSAGE = "Please sign this message to unlock the secret.";
 
@@ -83,8 +86,8 @@ export const ItemTypeToABIMap: Map<number, any> = new Map<number, any>([
     [ ItemType.PASSWORD,         PwsABI ]
 ]);
 
-export const maskCaracters = (str: string) => {
-    return str.slice(0, 4) + "***" + str.slice(str.length - 4, str.length);
+export const maskCaracters = (str: string, long: number = 4) => {
+    return str.slice(0, long) + "***" + str.slice(str.length - long, str.length);
 };
 
 export const hasValidSignature = async (address: string, signer: Signer, message: string = DEFAULT_SIGN_MESSAGE ) => {
@@ -123,4 +126,74 @@ export const getUserBalance = async (address: string, provider: any) => {
             reject(e);
         }
     })
+}
+
+export const encryptData = (data: string, key: string) => {
+    return AES.encrypt(data, key).toString();
+};
+
+export const decryptData = (data: string, key: string) => {
+    return AES.decrypt(data, key).toString(CryptoJS.enc.Utf8);
+}
+
+export const downloadFile = (data: string, fileName: string, asBlob: boolean = false, contentType: string = "text/plain" ) => {
+
+    return new Promise<void>(async (resolve, reject) => {
+
+        try{
+
+            const link = document.createElement('a');
+
+            link.download = fileName;
+            link.href = asBlob ?
+                URL.createObjectURL( new Blob([data], { type: contentType })) :
+                data;
+
+            link.click();
+
+            resolve();
+
+        }catch (e){
+            console.log(e);
+            reject(e);
+        }
+
+    });
+
+}
+
+export const getFileExtension = (fileName: string) => {
+    return fileName.split('.').pop();
+}
+
+export const splitStringIntoChunks = (str: string, size: number) => {
+    return new Promise( (resolve, reject) => {
+
+        try{
+
+            const chunks = [];
+            let index = 0;
+
+            while (index < str.length) {
+                chunks.push(str.substring(index, index + size));
+                index += size;
+            }
+
+            resolve(chunks);
+
+        }catch (e){
+            console.log(e);
+            reject(e);
+        }
+
+    });
+}
+
+export const getBase64 = (file: File, asText: boolean = false) => {
+    return new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = error => reject(error);
+        asText ? reader.readAsText(file) : reader.readAsDataURL(file);
+    });
 }

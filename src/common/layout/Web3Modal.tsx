@@ -6,15 +6,15 @@ import { CHAINS } from "@/types/Utils";
 const projectId = 'abd13b22d4736ee28252107e46448d6b'
 
 const metadata = {
-    name: 'BlockVault',
-    description: 'OnChain password manager',
-    url: '',
-    icons: ['']
+    name: 'BlockVAULT',
+    description: 'Decentralized secret manager',
+    url: 'https://blkvlt.vercel.app',
+    icons: ['https://blkvlt.vercel.app/img/og/og.webp']
 }
 
 createWeb3Modal({
     ethersConfig: defaultConfig({ metadata }),
-    chains: Array.from(CHAINS.values()),
+    chains: Array.from( CHAINS.values() ),
     projectId
 })
 

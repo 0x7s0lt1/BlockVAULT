@@ -158,7 +158,6 @@ nav{
     font-weight: bold;
     padding: 1vw 2vw;
     display: flex;
-    justify-content: center;
     align-items: center;
 }
 
@@ -470,6 +469,9 @@ nav{
 
 .text-white{
     color: white !important;
+}
+.text-gray{
+    color: gray !important;
 }
 .text-purple{
     color: var(--polygon-purple) !important;

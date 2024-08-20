@@ -22,6 +22,7 @@ import { CHAINS, DEFAULT_ADDRESS } from "@/types/Utils";
 import { VersionManagers, ABI as VersionManagerABI } from "@/common/contract/VersionManager/Contract";
 // import NetworkInfo from "@/modules/NetworkInfo";
 import Share from "@/pages/Share";
+import File from "@/pages/Items/File";
 
 const Index : FC = () => {
 
@@ -51,7 +52,7 @@ const Index : FC = () => {
 
         const vmAddr = VersionManagers.get(chainId);
 
-        if( CHAINS.get(chainId) != undefined && vmAddr != undefined && walletProvider ){
+        if( CHAINS.get(chainId) != undefined && vmAddr && walletProvider ){
 
             const provider = new BrowserProvider(walletProvider);
             const signer = await provider.getSigner();
@@ -94,7 +95,7 @@ const Index : FC = () => {
 
         (async()=>{
 
-            if(address && isConnected){
+            if(address && isConnected && chainId){
                 await fetchManager();
             }
 
@@ -136,13 +137,6 @@ const Index : FC = () => {
 
     }, [manager]);
 
-    useEffect(() => {
-
-        (async ()=>{
-            await fetchManager();
-        })();
-
-    }, []);
 
     return (
         <MainLayout>
@@ -182,6 +176,9 @@ const Index : FC = () => {
                                         <Route path="/loyality" element={<Loyality vault={vault}/>} ></Route>
                                         <Route path="/debit" element={<Debit vault={vault}/>} ></Route>
                                         <Route path="/password" element={<Password vault={vault}/>} ></Route>
+
+                                        <Route path="/file" element={<File vault={vault}/>} ></Route>
+
                                     </Routes>
                                 </div>
                             </>

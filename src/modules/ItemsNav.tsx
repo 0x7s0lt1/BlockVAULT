@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Key, CreditCard, PostcardHeart } from 'react-bootstrap-icons';
+import { Key, CreditCard, PostcardHeart, FileEarmarkLock2 } from 'react-bootstrap-icons';
 import { Link } from "react-router-dom";
 const ItemsNav : FC = () => {
 
@@ -14,6 +14,9 @@ const ItemsNav : FC = () => {
                 </Link>
                 <Link className={"nav-item btn-hover"} to={"/loyality"}>
                     <PostcardHeart size={26}/> &nbsp; Loyality Card
+                </Link>
+                <Link className={"nav-item btn-hover"} to={"/file"}>
+                    <FileEarmarkLock2 size={26}/> &nbsp; File Enc/Dec
                 </Link>
             </nav>
         </>
