@@ -87,6 +87,43 @@ html,body{
 
     /*box-shadow: 23px 23px 1px whitesmoke;*/
 }
+.landing-wrapper{
+    border-top: 2px solid white;
+    border-radius: 29px;
+    padding: 20px;
+    padding-top: 10rem;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.ldn-slot{
+    color: whitesmoke;
+    margin-bottom: 20px;
+}
+
+.ldn-slot h2{
+    font-size: 1.5rem;
+    font-weight: bold;
+    max-width: 40%;
+}
+.ldn-slot p{
+    font-size: 1rem;
+    font-weight: normal;
+    max-width: 50%;
+}
+
+.black-out{
+    position: fixed;
+    bottom: 0px;
+    min-width: 100vw;
+    height: 20rem;
+    z-index: 10;
+    background: linear-gradient( to top, #1a1919 10%, transparent 100%, transparent 80%);
+}
 
 .card{
     background: transparent !important;
@@ -286,7 +323,8 @@ nav{
 }
 
 .loading-wrapper{
-    min-height: 45vh;
+    min-height: 29rem;
+    max-height: 29rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -555,6 +593,7 @@ nav{
         padding: 1vw;
         border: 2px solid whitesmoke;
         background: transparent;
+        z-index: 1000;
     }
 
 

@@ -16,7 +16,7 @@ const ItemsNav : FC = () => {
                     <PostcardHeart size={26}/> &nbsp; Loyality Card
                 </Link>
                 <Link className={"nav-item btn-hover"} to={"/file"}>
-                    <FileEarmarkLock2 size={26}/> &nbsp; File Enc/Dec
+                    <FileEarmarkLock2 size={26}/> &nbsp; File Encryption
                 </Link>
             </nav>
         </>

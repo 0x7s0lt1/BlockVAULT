@@ -22,7 +22,7 @@ const MainLayout: FC<Props> = ({children}) => {
                 {/*<Footer/>*/}
             </MemoryRouter>
         </>
-    )
+)
 }
 
 export default MainLayout;

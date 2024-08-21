@@ -150,7 +150,8 @@ const Index : FC = () => {
                 <>
 
                     {
-                        !isConnected ? <ConnectWallet/> : !vault ? <><CreateVault manager={manager} setVault={setVault}/></> : <></>
+                        !isConnected ? <ConnectWallet/> : !vault ? <><CreateVault manager={manager}
+                                                                                  setVault={setVault}/></> : <></>
                     }
 
                     <section className={"dash"}>
@@ -166,18 +167,22 @@ const Index : FC = () => {
                                 <div className={"board slot-hover"}>
                                     <Routes>
 
-                                        <Route index path="/" element={<Password vault={vault}/>} ></Route>
+                                        <Route index path="/" element={<Password vault={vault}/>}></Route>
 
-                                        <Route path="/share/:item_type/:item_addr" element={<Share vault={vault}/>} ></Route>
+                                        <Route path="/share/:item_type/:item_addr"
+                                               element={<Share vault={vault}/>}></Route>
 
-                                        <Route  path="/deposit" element={<Deposit fetchBalance={fetchBalance} vault={vault}/>} ></Route>
-                                        <Route  path="/withdraw" element={<Withdraw balance={balance} fetchBalance={fetchBalance} vault={vault}/>} ></Route>
+                                        <Route path="/deposit"
+                                               element={<Deposit fetchBalance={fetchBalance} vault={vault}/>}></Route>
+                                        <Route path="/withdraw"
+                                               element={<Withdraw balance={balance} fetchBalance={fetchBalance}
+                                                                  vault={vault}/>}></Route>
 
-                                        <Route path="/loyality" element={<Loyality vault={vault}/>} ></Route>
-                                        <Route path="/debit" element={<Debit vault={vault}/>} ></Route>
-                                        <Route path="/password" element={<Password vault={vault}/>} ></Route>
+                                        <Route path="/loyality" element={<Loyality vault={vault}/>}></Route>
+                                        <Route path="/debit" element={<Debit vault={vault}/>}></Route>
+                                        <Route path="/password" element={<Password vault={vault}/>}></Route>
 
-                                        <Route path="/file" element={<File vault={vault}/>} ></Route>
+                                        <Route path="/file" element={<File vault={vault}/>}></Route>
 
                                     </Routes>
                                 </div>
@@ -185,7 +190,6 @@ const Index : FC = () => {
                         }
 
                     </section>
-
 
                 </>
             }
