@@ -30,7 +30,7 @@ pnpm dev
         </tr>
         <tr>
             <td>Ethereum</td>
-            <td></td>
+            <td>0x6f4c6487D21920BB9D9f31a9F277E705dC47BB64</td>
         </tr>
         <tr>
             <td>BSC</td>
