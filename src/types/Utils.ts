@@ -15,13 +15,13 @@ export const DEFAULT_SIGN_MESSAGE = "Sign this message to prove you own this wal
 export const SECRET_OPEN_SIGN_MESSAGE = "Please sign this message to unlock the secret.";
 
 export const CHAINS: Map<number, ChainMetaType> = new Map<number, ChainMetaType>([
-    // [1, {
-    //     chainId: 1,
-    //     name: "Ethereum",
-    //     currency: "ETH",
-    //     explorerUrl: "https://etherscan.io",
-    //     rpcUrls: "https://rpc.flashbots.net/fast"
-    // }],
+    [1, {
+        chainId: 1,
+        name: "Ethereum",
+        currency: "ETH",
+        explorerUrl: "https://etherscan.io",
+        rpcUrl: "https://rpc.flashbots.net/fast"
+    }],
     [137, {
         chainId: 137,
         name: "Polygon",
