@@ -4,6 +4,7 @@ import { ItemType } from "@/types/ItemType";
 import { ABI as LoyABI } from "@/common/contract/Items/LoyalityCardContract";
 import { ABI as PwsABI } from "@/common/contract/Items/PasswordContract";
 import { ABI as DebABI } from "@/common/contract/Items/DebitCardContract";
+import { ABI as chtABI } from "@/common/contract/Items/ChatContract";
 import CryptoJS from "crypto-js/core";
 import  AES from "crypto-js/aes";
 
@@ -25,7 +26,7 @@ export const CHAINS: Map<number, ChainMetaType> = new Map<number, ChainMetaType>
     [137, {
         chainId: 137,
         name: "Polygon",
-        currency: "MATIC",
+        currency: "POL",
         explorerUrl: "https://polygonscan.com",
         rpcUrl: "https://polygon-rpc.com"
     }],
@@ -84,7 +85,8 @@ export const CHAINS: Map<number, ChainMetaType> = new Map<number, ChainMetaType>
 export const ItemTypeToABIMap: Map<number, any> = new Map<number, any>([
     [ ItemType.LOYALITY_CARD,    LoyABI ],
     [ ItemType.DEBIT_CARD,       DebABI ],
-    [ ItemType.PASSWORD,         PwsABI ]
+    [ ItemType.PASSWORD,         PwsABI ],
+    [ ItemType.CHAT,             chtABI ]
 ]);
 
 export const maskCaracters = (str: string, long: number = 4) => {
