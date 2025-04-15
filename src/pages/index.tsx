@@ -24,7 +24,7 @@ import { VersionManagers, ABI as VersionManagerABI } from "@/common/contract/Ver
 import Share from "@/pages/Share";
 import File from "@/pages/Items/File";
 
-const Index : FC = () => {
+export default function Index(){
 
     const { switchNetwork } = useSwitchNetwork();
     const { address, chainId, isConnected } = useWeb3ModalAccount();
@@ -197,5 +197,3 @@ const Index : FC = () => {
         </MainLayout>
     )
 }
-
-export default Index;

@@ -90,8 +90,10 @@ const CreateVault : FC<Props> = ({ manager, setVault }) => {
                         Additionally, each transaction that involves creating, editing, or deleting secrets will also
                         incur some gas costs.
                         <br/><br/>
-                        {/*We recommend using the Polygon Mainnet for this process. Please ensure that your wallet contains enough MATIC to cover these gas costs, which typically range between $0.04 and $0.08.*/}
-                        {/*<br/><br/>*/}
+                       
+                        For testing purposes, recommended using the <a href={"#"} onClick={(e) => switchNetwork(11155111)}>Sepolia</a> testnet. Get test token from <a href="https://cloud.google.com/application/web3/faucet/ethereum/sepolia" target="_blank" rel="noreferrer">Google Faucet</a>.
+
+                        <br/><br/>
 
                         When you're ready to proceed, simply click the button below and confirm the transaction.
                         <br/>

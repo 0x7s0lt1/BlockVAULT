@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@sentry/nextjs": "^7.118.0",
     "@web3modal/ethers": "^5.0.11",
     "bootstrap": "^5.3.3",
     "crypto-js": "^4.2.0",

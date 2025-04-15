@@ -1,8 +1,29 @@
 
 <h1 align="center">BlockVAULT</h1>
 <p align="center">
-Decentralized secret manager
+On-chain secret manager
 </p>
+
+## 📝 Description
+This is a secret manager that allows you to store, retrieve, and even share your secrets in a secure and decentralized way.
+All items are stored in smart contracts that can be accessed by the owner or by those who have been granted access by the owner.
+
+## 📚 How it works
+
+### 1. Version Manager
+
+The Version Manager is a smart contract used to manage the relationship between vaults and user wallets.
+Each supported network must have its own Version Manager contract.
+
+### 2. Vault
+A Vault is a smart contract that stores the connection between a user's wallet and their items.
+One wallet can have only one Vault per network.
+
+### 3. Item
+Items are smart contracts used to store and retrieve secrets.
+There are three types of items: Password, Debit Card, and Loyalty Card.
+Items are shareable — the owner can grant access to other wallets to retrieve them.
+
 
 ## Solidity
 [https://github.com/0x7s0lt1/blockVault.sol](https://github.com/0x7s0lt1/blockVault.sol)
