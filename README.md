@@ -17,6 +17,7 @@ Each supported network must have its own Version Manager contract.
 
 ### 2. Vault
 A Vault is a smart contract that stores the connection between a user's wallet and their items.
+It also functional as a wallet. So tokens can be deposited and withdrawn.
 One wallet can have only one Vault per network.
 
 ### 3. Item

@@ -90,7 +90,7 @@ const CreateVault : FC<Props> = ({ manager, setVault }) => {
                         Additionally, each transaction that involves creating, editing, or deleting secrets will also
                         incur some gas costs.
                         <br/><br/>
-                       
+
                         For testing purposes, recommended using the <a href={"#"} onClick={(e) => switchNetwork(11155111)}>Sepolia</a> testnet. Get test token from <a href="https://cloud.google.com/application/web3/faucet/ethereum/sepolia" target="_blank" rel="noreferrer">Google Faucet</a>.
 
                         <br/><br/>
