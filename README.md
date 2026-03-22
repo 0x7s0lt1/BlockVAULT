@@ -62,24 +62,8 @@ pnpm dev
             <td>0x77cbc128f1eff68c169881c160f9b305a06a64cf</td>
         </tr>
         <tr>
-            <td>Base</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Avalance</td>
-            <td></td>
-        </tr>
-        <tr>
             <td>Arbitrum</td>
             <td>0xC76440DbdB9B42Ae2BF0269D12280614604d43e8</td>
-        </tr>
-        <tr>
-            <td>Optimism</td> 
-            <td></td>
-        </tr>
-        <tr>
-            <td>Linea</td> 
-            <td></td>
         </tr>
     </tbody>
 </table>
