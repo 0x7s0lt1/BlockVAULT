@@ -4,7 +4,6 @@
 On-chain secret manager
 </p>
 
-## 📝 Description
 This is a secret manager that allows you to store, retrieve, and even share your secrets in a secure and decentralized way.
 All items are stored in smart contracts that can be accessed by the owner or by those who have been granted access by the owner.
 
